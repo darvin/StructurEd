@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Ships</key>
+	<dict>
+		<key>Description</key>
+		<string>Кораблики</string>
+		<key>ElementStructure</key>
+		<dict>
+			<key>Speed</key>
+			<dict>
+				<key>Description</key>
+				<string>Скорость</string>
+				<key>Type</key>
+				<string>Number</string>
+			</dict>
+			<!--<key>Parts</key>-->
+			<!--<dict>-->
+				<!--<key>ObjectsPath</key>-->
+				<!--<string>Parts</string>-->
+				<!--<key>Description</key>-->
+				<!--&lt;!&ndash;<string>Части караблика</string>&ndash;&gt;-->
+				<!--&lt;!&ndash;<key>Type</key>&ndash;&gt;-->
+				<!--&lt;!&ndash;<string>Array</string>&ndash;&gt;-->
+			<!--</dict>-->
+			<key>Name</key>
+			<dict>
+				<key>Description</key>
+				<string>Имя кораблика</string>
+				<key>Type</key>
+				<string>String</string>
+			</dict>
+            <key>Some array of ints</key>
+			<dict>
+				<key>ElementScheme</key>
+				<dict>
+                    <key>Type</key>
+                    <string>Number</string>
+				</dict>
+				<key>Description</key>
+				<string>Массивчик интов</string>
+				<key>Type</key>
+				<string>Array</string>
+			</dict>
+
+            <key>Some array of strings</key>
+			<dict>
+				<key>ElementScheme</key>
+				<dict>
+                    <key>Type</key>
+                    <string>String</string>
+				</dict>
+				<key>Description</key>
+				<string>Массивчик стрингов</string>
+				<key>Type</key>
+				<string>Array</string>
+			</dict>
+		</dict>
+		<key>Type</key>
+		<string>StructuredDictionary</string>
+	</dict>
+	<key>Parts</key>
+	<dict>
+		<key>Description</key>
+		<string>Части корабликов</string>
+		<key>ElementStructure</key>
+		<dict>
+			<key>Sprite</key>
+			<dict>
+				<key>FilenameMask</key>
+				<string>*.png</string>
+				<key>Description</key>
+				<string>Спрайт</string>
+				<key>Type</key>
+				<string>Filename</string>
+			</dict>
+			<key>Name</key>
+			<dict>
+				<key>Description</key>
+				<string>Имя части</string>
+				<key>Type</key>
+				<string>String</string>
+			</dict>
+		</dict>
+		<key>Type</key>
+		<string>StructuredDictionary</string>
+	</dict>
+</dict>
+</plist>
