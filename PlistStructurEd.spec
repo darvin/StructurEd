@@ -1,21 +1,19 @@
 # -*- mode: python -*-
-a = Analysis([os.path.join(HOMEPATH,'support/_mountzlib.py'), os.path.join(HOMEPATH,'support/useUnicode.py'), 'src/PlistStructurEd.pyw'],
+a = Analysis([os.path.join(HOMEPATH,'support/_mountzlib.py'), os.path.join(HOMEPATH,'support/useUnicode.py'), 'PlistStructurEd.spec'],
              pathex=['/Users/darvin/Workspace/PlistStructurEd'])
 pyz = PYZ(a.pure)
-exe = EXE( pyz,
+exe = EXE(pyz,
           a.scripts,
-          a.binaries,
-          a.zipfiles,
-          a.datas,
-          name=os.path.join('dist', 'PlistStructurEd'),
+          exclude_binaries=1,
+          name=os.path.join('build/pyi.darwin/PlistStructurEd', 'PlistStructurEd'),
           debug=False,
           strip=False,
           upx=True,
-          console=False )
-
-
-import sys
-if sys.platform.startswith("darwin"):
-    app = BUNDLE(exe,
-                 name=os.path.join('dist', 'PlistStructurEd.app'),
-                 version="0.01")
+          console=True )
+coll = COLLECT( exe,
+               a.binaries,
+               a.zipfiles,
+               a.datas,
+               strip=False,
+               upx=True,
+               name=os.path.join('dist', 'PlistStructurEd'))
