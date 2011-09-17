@@ -1,6 +1,7 @@
 from copy import deepcopy
 import os
 from models import StructuredNode, Path, ArrayNode, NumberNode, StringNode
+from nodewindow import NodeWindow
 from schemetree import SchemeTreeWidget
 from widgets import StructuredWidget
 
@@ -37,7 +38,7 @@ class MainWindow(QMainWindow):
 
         menuFile = self.globalMenuBar.addMenu("File")
         menuFile.addActions((actionLoadScheme, actionOpen, actionSave, actionSaveAs))
-        self.cachedWindows = {}
+
 
 
         self.toolbar = QToolBar()
@@ -53,15 +54,8 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(self.scheme_tree_view)
 
     def _open_root(self):
-        self.open_window(())
+        NodeWindow(self.__data, self.__scheme).show()
 
-    def open_window(self, path):
-        if path in self.cachedWindows:
-            self.cachedWindows[path].show()
-        else:
-            p = Path(path)
-            self.cachedWindows[path] = StructuredWidget(unicode(p), p.get(self.__data), p.get(self.__scheme), open_func=self.open_window)
-            self.open_window(path)
 
 
 

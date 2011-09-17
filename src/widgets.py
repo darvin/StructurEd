@@ -1,6 +1,6 @@
 from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QLineEdit, QSpinBox, QWidget, QVBoxLayout, QListWidget, QPushButton, QHBoxLayout, QListWidgetItem, QGridLayout, QLabel, QAbstractItemView
-from models import StructuredNode, StringNode, NumberNode, ArrayNode
+from models import StructuredNode, StringNode, NumberNode, ArrayNode, Path
 from utils import get_or_create_dict_element
 
 DEFAULT_VALUES = {
@@ -38,15 +38,19 @@ class NodeWidget(object):
 #        return self.data.path().get(self.scheme)
 
 
+
     @classmethod
-    def add_node_widget(cls, widget_class):
+    def register(cls, widget_class):
+        if not issubclass(widget_class, cls):
+            raise NotImplementedError
         cls.__node_widgets_classes[widget_class.data_type] = widget_class
+        return widget_class
 
     @classmethod
     def create_node_widget(cls, name, data, scheme, **kwargs):
         return cls.__node_widgets_classes[scheme["Type"].get()](name, data, scheme, **kwargs)
 
-
+@NodeWidget.register
 class StringWidget(QLineEdit, NodeWidget):
     data_type = "String"
     def __init__(self, name, data, scheme, parent=None):
@@ -59,13 +63,11 @@ class StringWidget(QLineEdit, NodeWidget):
     def dump(self):
         self.data.set(unicode(self.text()))
 
-NodeWidget.add_node_widget(StringWidget)
-
+@NodeWidget.register
 class FilenameWidget(StringWidget):
     data_type = "Filename"
-NodeWidget.add_node_widget(FilenameWidget)
 
-
+@NodeWidget.register
 class NumberWidget(QSpinBox, NodeWidget):
     data_type = "Number"
     def __init__(self, name, data, scheme, parent=None):
@@ -77,11 +79,10 @@ class NumberWidget(QSpinBox, NodeWidget):
 
     def dump(self):
         self.data.set(self.value())
-NodeWidget.add_node_widget(NumberWidget)
 
 
 
-
+@NodeWidget.register
 class ArrayWidget(QWidget, NodeWidget):
     data_type = "Array"
     two_rows = True
@@ -140,9 +141,8 @@ class ArrayWidget(QWidget, NodeWidget):
         self._listwidget.clear()
         for item in self.data.get():
             self.__createItem(unicode(item))
-NodeWidget.add_node_widget(ArrayWidget)
 
-
+@NodeWidget.register
 class StructuredWidget(QWidget, NodeWidget):
     def __init__(self, name, data, scheme, open_func, parent=None):
         QWidget.__init__(self, parent)
@@ -185,7 +185,7 @@ class StructuredWidget(QWidget, NodeWidget):
 
 
 
-
+@NodeWidget.register
 class StructuredDictionaryWidget(QWidget, NodeWidget):
     data_type = "StructuredDictionary"
     two_rows = True
@@ -220,7 +220,7 @@ class StructuredDictionaryWidget(QWidget, NodeWidget):
 
     def edit_item(self):
         name = unicode(self._listwidget.currentItem().text())
-        self.parent().open(self.data.path()+(name,))
+        self.parent().open(Path(self.data.path()+(name,)))
 
     def delete_item(self):
         item_name = unicode(self._listwidget.currentItem().text())
@@ -251,4 +251,3 @@ class StructuredDictionaryWidget(QWidget, NodeWidget):
     def load(self):
         for key in self.data.keys():
             self.__createItem(key)
-NodeWidget.add_node_widget(StructuredDictionaryWidget)

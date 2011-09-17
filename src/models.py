@@ -3,6 +3,11 @@ from operator import getitem
 __author__ = 'darvin'
 
 class Path(tuple):
+    @classmethod
+    def from_string(cls, path_str):
+        return cls(path_str.split("/"))
+
+
     def get(self, root_node):
         effective_path = self
         if not root_node.is_root():
