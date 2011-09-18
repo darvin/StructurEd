@@ -4,3 +4,6 @@ include resources/icons/*.png
 include resources/application_icon/*
 include resources/resources.qrc
 include README.asciidoc
+include resources/qt.conf
+include tests/*.py
+include tests/test_data/*

@@ -29,10 +29,11 @@ if sys.platform == 'darwin':
          # be used for opening files.
          options=dict(
              py2app=dict(
-                argv_emulation=True,
+                argv_emulation=False,
                 iconfile='resources/application_icon/StructurEd.icns',
                 includes=['sip'],
-                packages=['PyQt4']
+                packages=['PyQt4'],
+                resources=["tests/test_data/sample_data.plist", "tests/test_data/sample_scheme.plist", "resources/qt.conf"]
              )),
      )
 elif sys.platform == 'win32':
