@@ -45,8 +45,12 @@ class NodeWidget(object):
         return cls.__node_widgets_classes[scheme["Type"].get()](name, data, scheme, **kwargs)
 
     @classmethod
-    def get_default_data(cls, scheme):
-        return cls.__node_widgets_classes[scheme["Type"].get()]._get_default_data(scheme)
+    def get_default_data(cls, scheme, data):
+        return cls.__node_widgets_classes[scheme["Type"].get()]._get_default_data(scheme, data)
+
+    @classmethod
+    def _get_default_data(self, scheme, data):
+        raise NotImplementedError
 
 
 @NodeWidget.register
@@ -63,7 +67,7 @@ class StringWidget(QLineEdit, NodeWidget):
         self.data.set(unicode(self.text()))
 
     @classmethod
-    def _get_default_data(cls, scheme):
+    def _get_default_data(cls, scheme, data):
         return StringNode("")
 @NodeWidget.register
 class FilenameWidget(StringWidget):
@@ -86,7 +90,7 @@ class IntegerWidget(StringWidget):
         self.data.set(int(self.text()))
 
     @classmethod
-    def _get_default_data(cls, scheme):
+    def _get_default_data(cls, scheme, data):
         return IntegerNode(0)
 
 @NodeWidget.register
@@ -104,7 +108,7 @@ class RealWidget(StringWidget):
         self.data.set(float(self.text()))
 
     @classmethod
-    def _get_default_data(cls, scheme):
+    def _get_default_data(cls, scheme, data):
         return RealNode(0.0)
 
 
@@ -122,7 +126,7 @@ class BooleanWidget(QCheckBox, NodeWidget):
         self.data.set(self.isChecked())
 
     @classmethod
-    def _get_default_data(cls, scheme):
+    def _get_default_data(cls, scheme, data):
         return BooleanNode(False)
 
 @NodeWidget.register
@@ -150,7 +154,7 @@ class ArrayWidget(QWidget, NodeWidget):
 
 
         self.element_scheme = self.scheme["ElementScheme"]
-        self.new_data = NodeWidget.get_default_data(self.element_scheme)
+        self.new_data = NodeWidget.get_default_data(self.element_scheme, self.data)
         self.add_widget = NodeWidget.create_node_widget("__not_exist", self.new_data, self.element_scheme)
         hlayout.addWidget(self.add_widget)
 
@@ -187,7 +191,7 @@ class ArrayWidget(QWidget, NodeWidget):
 
 
     @classmethod
-    def _get_default_data(cls, scheme):
+    def _get_default_data(cls, scheme, data):
         return ArrayNode([])
 
 @NodeWidget.register
@@ -203,7 +207,7 @@ class StructuredWidget(QWidget, NodeWidget):
 
         i = 0
         for child_name, child_scheme in self.scheme.iteritems():
-            widget = NodeWidget.create_node_widget(child_name, get_or_create_dict_element(self.data, child_name, NodeWidget.get_default_data(child_scheme)), child_scheme, parent=self)
+            widget = NodeWidget.create_node_widget(child_name, get_or_create_dict_element(self.data, child_name, NodeWidget.get_default_data(child_scheme, self.data)), child_scheme, parent=self)
             widget.load()
             if widget.two_rows:
                 widget_col = 1
@@ -233,7 +237,7 @@ class StructuredWidget(QWidget, NodeWidget):
 
 
     @classmethod
-    def _get_default_data(cls, scheme):
+    def _get_default_data(cls, scheme, data):
         return StructuredNode({})
 
 
@@ -306,7 +310,7 @@ class StructuredDictionaryWidget(QWidget, NodeWidget):
             self.__createItem(key)
 
     @classmethod
-    def _get_default_data(cls, scheme):
+    def _get_default_data(cls, scheme, data):
         return StructuredNode({})
 
 
@@ -336,5 +340,22 @@ class SelectWidget(QComboBox, NodeWidget):
 
 
     @classmethod
-    def _get_default_data(cls, scheme):
+    def _get_default_data(cls, scheme, data):
         return Node.create_node(scheme["Options"][0].get())
+
+
+@NodeWidget.register
+class SelectObjectWidget(SelectWidget):
+    data_type = "SelectObject"
+
+    def _load_options(self):
+        self.options = self._get_options_from_scheme(self.scheme, self.data)
+
+    @classmethod
+    def _get_options_from_scheme(cls, scheme, data):
+        path = Path.from_string(scheme["OptionPath"].get())
+        return [Node.create_node(name) for name in path.get(data).keys()]
+        
+    @classmethod
+    def _get_default_data(cls, scheme, data):
+        return cls._get_options_from_scheme(scheme, data)[0]

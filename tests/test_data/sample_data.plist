@@ -93,15 +93,22 @@
 			<string>somefile.png</string>
 			<key>Some select from ints</key>
 			<integer>35</integer>
+			<key>Some select from objects</key>
+			<string>Object first type #2</string>
 			<key>Some string</key>
 			<string>stirng1</string>
 		</dict>
 		<key>object second type #2</key>
 		<dict>
+			<key>Some array of ints with select</key>
+			<array>
+			</array>
 			<key>Some filename</key>
 			<string></string>
 			<key>Some select from ints</key>
 			<integer>6</integer>
+			<key>Some select from objects</key>
+			<string>Object first type #1</string>
 			<key>Some string</key>
 			<string></string>
 		</dict>

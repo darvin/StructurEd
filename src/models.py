@@ -6,15 +6,13 @@ __author__ = 'darvin'
 class Path(tuple):
     @classmethod
     def from_string(cls, path_str):
-        return cls(path_str.split("/"))
+        return cls([name for name in path_str.split("/") if name])
 
 
     def get(self, root_node):
         effective_path = self
         if not root_node.is_root():
-            for node_name in root_node.path():
-                if effective_path[0]==node_name:
-                    effective_path = effective_path[1:]
+            root_node = root_node.get_root()
         current_node = root_node
         for name in effective_path:
             if name in current_node:
@@ -47,6 +45,12 @@ class Node(object):
 
     def is_root(self):
         return self.parent is None
+
+    def get_root(self):
+        if self.parent:
+            return self.parent.get_root()
+        else:
+            return self
 
     def __unicode__(self):
         return unicode(self._value)
