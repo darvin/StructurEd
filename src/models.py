@@ -10,11 +10,12 @@ class Path(tuple):
 
 
     def get(self, root_node):
-        effective_path = self
+        print "getting ", self
         if not root_node.is_root():
             root_node = root_node.get_root()
         current_node = root_node
-        for name in effective_path:
+        for name in self:
+            print current_node
             if name in current_node:
                 current_node = current_node[name]
             elif "ElementStructure" in current_node:

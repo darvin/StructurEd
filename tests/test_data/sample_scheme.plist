@@ -92,6 +92,21 @@
 				<key>Type</key>
 				<string>Array</string>
 			</dict>
+
+            <key>Some array of objects with select</key>
+			<dict>
+				<key>ElementScheme</key>
+				<dict>
+					<key>OptionPath</key>
+                    <string>/Objects2</string>
+                    <key>Type</key>
+                    <string>SelectObject</string>
+				</dict>
+				<key>Description</key>
+				<string>Array of ints with select</string>
+				<key>Type</key>
+				<string>Array</string>
+			</dict>
 		</dict>
 		<key>Type</key>
 		<string>StructuredDictionary</string>

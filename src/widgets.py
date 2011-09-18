@@ -46,7 +46,9 @@ class NodeWidget(object):
 
     @classmethod
     def get_default_data(cls, scheme, data):
-        return cls.__node_widgets_classes[scheme["Type"].get()]._get_default_data(scheme, data)
+        new_data = cls.__node_widgets_classes[scheme["Type"].get()]._get_default_data(scheme, data)
+        new_data.parent = data
+        return new_data
 
     @classmethod
     def _get_default_data(self, scheme, data):
@@ -155,6 +157,7 @@ class ArrayWidget(QWidget, NodeWidget):
 
         self.element_scheme = self.scheme["ElementScheme"]
         self.new_data = NodeWidget.get_default_data(self.element_scheme, self.data)
+
         self.add_widget = NodeWidget.create_node_widget("__not_exist", self.new_data, self.element_scheme)
         hlayout.addWidget(self.add_widget)
 
