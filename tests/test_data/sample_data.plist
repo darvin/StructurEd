@@ -105,11 +105,13 @@
 				<integer>100</integer>
 			</array>
 			<key>Some filename</key>
-			<string>somefile.png</string>
+			<string>/Users/darvin/Workspace/PlistStructurEd/tests/test_data/sample_scheme.plist</string>
 			<key>Some select from ints</key>
 			<integer>35</integer>
 			<key>Some select from objects</key>
 			<string>Object first type #2</string>
+			<key>Some sprite filename</key>
+			<string>document-save.png</string>
 			<key>Some string</key>
 			<string>stirng1</string>
 		</dict>
@@ -124,6 +126,8 @@
 			<integer>6</integer>
 			<key>Some select from objects</key>
 			<string>Object first type #1</string>
+			<key>Some sprite filename</key>
+			<string>preferences.png</string>
 			<key>Some string</key>
 			<string></string>
 		</dict>

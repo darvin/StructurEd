@@ -1,6 +1,6 @@
 import os
 from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QLineEdit, QSpinBox, QWidget, QVBoxLayout, QListWidget, QPushButton, QHBoxLayout, QListWidgetItem, QGridLayout, QLabel, QAbstractItemView, QComboBox, QIntValidator, QDoubleValidator, QCheckBox, QFileDialog
+from PyQt4.QtGui import QLineEdit, QSpinBox, QWidget, QVBoxLayout, QListWidget, QPushButton, QHBoxLayout, QListWidgetItem, QGridLayout, QLabel, QAbstractItemView, QComboBox, QIntValidator, QDoubleValidator, QCheckBox, QFileDialog, QImage, QPixmap
 from models import StructuredNode, StringNode, IntegerNode, RealNode, BooleanNode, ArrayNode, Path, Node
 from utils import get_or_create_dict_element, layout_set_sm_and_mrg, StyledButton
 
@@ -104,6 +104,11 @@ class FilenameWidget(QWidget, NodeWidget):
         else:
             self.without_path = False
 
+        if self.without_path and "BasePath" in self.scheme:
+            self.base_path = self.scheme["BasePath"].get()
+        else:
+            self.base_path = None
+
 
         self.layout = QHBoxLayout(self)
         self.layout.setMargin(0)
@@ -114,6 +119,14 @@ class FilenameWidget(QWidget, NodeWidget):
         self._text.textChanged.connect(self.dump)
         self.layout.addWidget(self._text)
         self.layout.addWidget(self._browse_button)
+        self.file_name = unicode(self.data.get())
+
+    def get_actual_filename(self):
+        if self.without_path and self.base_path and self.file_name:
+            return os.path.abspath(os.path.join(
+                os.path.expanduser(self.base_path), self.file_name))
+        else:
+            return self.file_name
 
 
     def load(self):
@@ -123,16 +136,34 @@ class FilenameWidget(QWidget, NodeWidget):
         self.data.set(unicode(self._text.text()))
 
     def browse(self):
-        file_name = QFileDialog.getOpenFileName(self, "Select file", filter=self.filename_mask)
+        self.file_name = file_name = unicode(QFileDialog.getOpenFileName(self, "Select file", filter=self.filename_mask))
         if file_name:
             if self.without_path:
-                file_name = os.path.basename(unicode(file_name))
+                file_name = os.path.basename(file_name)
             self._text.setText(file_name)
 
     @classmethod
     def _get_default_data(cls, scheme, data):
         return StringNode("")
 
+
+@NodeWidget.register
+class FilenameImageWidget(FilenameWidget):
+    data_type = "FilenameImage"
+
+    def __init__(self, name, data, scheme, parent=None):
+        super(FilenameImageWidget, self).__init__(name, data, scheme, parent)
+        self._viewer = QLabel(self)
+        self.layout.addWidget(self._viewer)
+
+    def dump(self):
+        super(FilenameImageWidget, self).dump()
+        filename = self.get_actual_filename()
+#        if filename and
+        img = QPixmap(filename)
+        if img.isNull():
+            img = QPixmap(":/icons/does-not-exist.png")
+        self._viewer.setPixmap(img)
 
 @NodeWidget.register
 class IntegerWidget(StringWidget):

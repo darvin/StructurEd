@@ -93,6 +93,7 @@ class MainWindow(QMainWindow):
     def __load_scheme(self, scheme):
         self.__scheme = scheme
         self.scheme_tree_view.load(self.__scheme)
+        self.adjustSize()
 
     def __load_data(self, data):
         self.__data = data

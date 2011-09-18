@@ -1,4 +1,5 @@
-from PyQt4.QtGui import QTreeWidgetItem, QTreeWidget, QIcon
+from PyQt4.QtCore import QSize
+from PyQt4.QtGui import QTreeWidgetItem, QTreeWidget, QIcon, QSizePolicy
 from models import StructuredNode
 
 __author__ = 'darvin'
@@ -14,7 +15,11 @@ class SchemeTreeWidget(QTreeWidget):
         self.setColumnCount(3)
 #        self.header().hide()
         self.setHeaderLabels(("Name", "Type", "Description"))
+        self.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
 
+    def sizeHint(self):
+        s = self.size()
+        return QSize(s.width()+20, s.height())
     def _create_item_from_node(self, node, parent):
         if "Type" in node:
             type = node["Type"].get()

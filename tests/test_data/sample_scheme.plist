@@ -143,13 +143,26 @@
 			<key>Some filename</key>
 			<dict>
 				<key>FilenameMask</key>
-				<string>*.png</string>
+				<string>*.plist</string>
 				<key>Description</key>
-				<string>Select file</string>
+				<string>Select some plist</string>
 				<key>Type</key>
 				<string>Filename</string>
                 <key>WithoutPath</key>
+                <false/>
+			</dict>
+            <key>Some sprite filename</key>
+			<dict>
+				<!--<key>FilenameMask</key>-->
+				<!--<string>*.png</string>-->
+				<key>Description</key>
+				<string>Select some png</string>
+				<key>Type</key>
+				<string>FilenameImage</string>
+                <key>WithoutPath</key>
                 <true/>
+                <key>BasePath</key>
+                <string>~/Workspace/PlistStructurEd/resources/icons</string>
 			</dict>
 			<key>Some string</key>
 			<dict>
