@@ -52,7 +52,7 @@ setup(
     version="0.1",
     author="Sergey Klimov",
     author_email="sergey.v.klimov@gmail.com",
-    url="https://github.com/darvin/StructurEd",
+    url="http://darvin.github.com/StructurEd/",
     description="Editor for custom-structured files, firstly for plists for iOS/OS X games",
     long_description="""
     """,
