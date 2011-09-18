@@ -1,3 +1,18 @@
+= Overview
+
+= Installation
+
+= Usage
+To use StructurEd, you should:
+
+. <<Create Scheme, Create scheme>>
+. <<Edit data, Edit you data>>
+. <<Generate parser, Load data>> into your application (or game)
+
+== Create Scheme
+Scheme is just plist file that describes structure of future plist files. Example:
+
+----
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
@@ -196,3 +211,21 @@
 	</dict>
 </dict>
 </plist>
+----
+
+Every node of xml document describes widget. There are many types of <<Widgets,widgets>>, that you can use
+
+== Edit data
+
+== Generate parser
+
+
+= Details
+
+== Widgets
+
+=== StringWidget
+
+=== IntWidget
+
+=== RealWidget
