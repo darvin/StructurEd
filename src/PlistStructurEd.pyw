@@ -12,7 +12,7 @@ import sys
 from PyQt4 import QtGui
 from PyQt4.QtGui import *
 
-
+import rc
 
 
 class MainWindow(QMainWindow):
@@ -20,17 +20,17 @@ class MainWindow(QMainWindow):
         super(MainWindow, self).__init__()
         self.save_filename = None
         self.globalMenuBar = QMenuBar()
-        actionLoadScheme = QAction(self.style().standardIcon(QStyle.SP_FileIcon), "Load scheme file", self)
+        actionLoadScheme = QAction(QIcon(":/icons/scheme-open.png"), "Load scheme file", self)
         actionLoadScheme.triggered.connect(self.load_scheme)
-        actionSave = QAction(self.style().standardIcon(QStyle.SP_DialogSaveButton),"Save", self)
+        actionSave = QAction(QIcon(":/icons/document-save.png"),"Save", self)
         actionSave.triggered.connect(self.save_data)
-        actionOpen = QAction(self.style().standardIcon(QStyle.SP_DialogOpenButton), "Open", self)
+        actionOpen = QAction(QIcon(":/icons/document-open.png"), "Open", self)
         actionOpen.triggered.connect(self.load_data)
-        actionSaveAs = QAction(self.style().standardIcon(QStyle.SP_DialogSaveButton),"Save as...", self)
+        actionSaveAs = QAction(QIcon(":/icons/document-save-as.png"),"Save as...", self)
         actionSaveAs.triggered.connect(self.save_data_as)
 
 
-        actionOpenRoot = QAction(self.style().standardIcon(QStyle.SP_DirHomeIcon), "Open root item", self)
+        actionOpenRoot = QAction(QIcon(":/icons/window-new.png"), "Open root item", self)
         actionOpenRoot.triggered.connect(self._open_root)
 
 

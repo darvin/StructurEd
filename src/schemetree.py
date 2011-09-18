@@ -1,12 +1,13 @@
-from PyQt4.QtGui import QTreeWidgetItem, QTreeWidget
+from PyQt4.QtGui import QTreeWidgetItem, QTreeWidget, QIcon
 from models import StructuredNode
 
 __author__ = 'darvin'
 
-
+import rc
 
 
 class SchemeTreeWidget(QTreeWidget):
+    __icons_cache = {}
     def __init__(self, scheme, parent=None):
         super(SchemeTreeWidget, self).__init__(parent)
         self.scheme = scheme
@@ -27,6 +28,10 @@ class SchemeTreeWidget(QTreeWidget):
 
         item = QTreeWidgetItem(parent, [node.name, type, desc ])
         item.setExpanded(True)
+        if type not in self.__icons_cache:
+            self.__icons_cache[type] = QIcon(":/icons/small/datatypes/{}.png".format(type))
+        print self.__icons_cache
+        item.setIcon(0, self.__icons_cache[type])
         return item
 
     def __load(self, node, parent_item):

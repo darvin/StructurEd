@@ -1,0 +1,25 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource>
+    <file>icons/document-new.png</file>
+    <file>icons/document-open.png</file>
+    <file>icons/document-save.png</file>
+    <file>icons/document-save-all.png</file>
+    <file>icons/document-save-as.png</file>
+    <file>icons/scheme-open.png</file>
+    <file>icons/scheme-new.png</file>
+    <file>icons/window-new.png</file>
+
+
+    <file>icons/small/datatypes/Array.png</file>
+    <file>icons/small/datatypes/Boolean.png</file>
+    <file>icons/small/datatypes/Filename.png</file>
+    <file>icons/small/datatypes/Integer.png</file>
+    <file>icons/small/datatypes/Real.png</file>
+    <file>icons/small/datatypes/Sprite.png</file>
+    <file>icons/small/datatypes/String.png</file>
+    <file>icons/small/datatypes/StructuredDictionary.png</file>
+    <file>icons/small/datatypes/Unknown.png</file>
+    <file>icons/small/datatypes/Select.png</file>
+    <file>icons/small/datatypes/SelectObject.png</file>
+</qresource>
+</RCC>
