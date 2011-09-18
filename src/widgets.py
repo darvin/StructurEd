@@ -1,5 +1,5 @@
 from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QLineEdit, QSpinBox, QWidget, QVBoxLayout, QListWidget, QPushButton, QHBoxLayout, QListWidgetItem, QGridLayout, QLabel, QAbstractItemView
+from PyQt4.QtGui import QLineEdit, QSpinBox, QWidget, QVBoxLayout, QListWidget, QPushButton, QHBoxLayout, QListWidgetItem, QGridLayout, QLabel, QAbstractItemView, QComboBox
 from models import StructuredNode, StringNode, NumberNode, ArrayNode, Path
 from utils import get_or_create_dict_element
 
@@ -9,7 +9,7 @@ DEFAULT_VALUES = {
     "String":lambda: StringNode(""),
     "Number":lambda: NumberNode(0),
     "Array":lambda: ArrayNode(()),
-
+    "Select": lambda : StringNode(""),
 }
 
 
@@ -40,7 +40,7 @@ class NodeWidget(object):
 
 
     @classmethod
-    def register(cls, widget_class):
+    def register(cls, widget_class): 
         if not issubclass(widget_class, cls):
             raise NotImplementedError
         cls.__node_widgets_classes[widget_class.data_type] = widget_class
@@ -251,3 +251,28 @@ class StructuredDictionaryWidget(QWidget, NodeWidget):
     def load(self):
         for key in self.data.keys():
             self.__createItem(key)
+
+
+@NodeWidget.register
+class SelectWidget(QComboBox, NodeWidget):
+    data_type = "Select"
+    def __init__(self, name, data, scheme, parent=None):
+        QComboBox.__init__(self, parent)
+        NodeWidget.__init__(self, name, data, scheme)
+
+        self._load_options()
+        for i, option in enumerate(self.options):
+            self.addItem(unicode(option), i)
+        self.load()
+        self.currentIndexChanged.connect(lambda index: self.dump())
+
+    def _load_options(self):
+        self.options = self.scheme["Options"]
+
+    def load(self):
+        for i, option in enumerate(self.options):
+            if option.get()==self.data.get():
+                self.setCurrentIndex(i)
+
+    def dump(self):
+        self.data.set(self.options[self.itemData(self.currentIndex()).toPyObject()].get())

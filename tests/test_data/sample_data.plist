@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Objects1</key>
+	<dict>
+		<key>Ship1</key>
+		<dict>
+			<key>Some array of ints</key>
+			<array>
+				<integer>0</integer>
+				<integer>4</integer>
+				<integer>5</integer>
+				<integer>75</integer>
+			</array>
+			<key>Some array of strings</key>
+			<array>
+				<string>string 1</string>
+				<string>string 2</string>
+				<string>string 3</string>
+			</array>
+			<key>Some number</key>
+			<integer>6</integer>
+			<key>Some select from strings</key>
+			<string>str2</string>
+			<key>Some string</key>
+			<string>some string</string>
+		</dict>
+		<key>Ship2</key>
+		<dict>
+			<key>Some array of ints</key>
+			<array>
+				<integer>0</integer>
+				<integer>33</integer>
+			</array>
+			<key>Some array of strings</key>
+			<array>
+				<string>string 1</string>
+			</array>
+			<key>Some number</key>
+			<integer>23</integer>
+			<key>Some select from strings</key>
+			<string>str2</string>
+			<key>Some string</key>
+			<string>asdf</string>
+		</dict>
+	</dict>
+	<key>Objects2</key>
+	<dict>
+		<key>part1</key>
+		<dict>
+		</dict>
+		<key>part2</key>
+		<dict>
+			<key>Some filename</key>
+			<string></string>
+			<key>Some string</key>
+			<string></string>
+		</dict>
+	</dict>
+</dict>
+</plist>

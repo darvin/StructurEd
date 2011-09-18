@@ -68,10 +68,10 @@ class NodeWindow(QWidget):
             self.currentStructuredWidget.show()
             self.pathWidget.setPath(path)
         else:
-            try:
-                self.cachedWidgets[path] = StructuredWidget(unicode(path), path.get(self.data), path.get(self.scheme), self.openWidgetByPath, self)
-            except:
-                return 
+#            try:
+            self.cachedWidgets[path] = StructuredWidget(unicode(path), path.get(self.data), path.get(self.scheme), self.openWidgetByPath, self)
+#            except:
+#                return
             self.layout.addWidget(self.cachedWidgets[path])
             self.openWidgetByPath(path)
 

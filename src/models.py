@@ -1,3 +1,4 @@
+from copy import deepcopy
 from operator import getitem
 
 __author__ = 'darvin'
@@ -32,7 +33,9 @@ class Path(tuple):
 
 
 class Node(object):
+    __node_classes = {}
     def __init__(self, value, name=None, parent=None):
+        print "Creating ", name, self.__class__
         self._value = value
         if not parent:
             self.name = "root"
@@ -66,6 +69,20 @@ class Node(object):
         else:
             return Path(self.parent.path()+(self.name,))
 
+    @classmethod
+    def register(cls, node_class):
+        if not issubclass(node_class, cls):
+            raise NotImplementedError
+        cls.__node_classes[node_class.types] = node_class
+        return node_class
+
+    @classmethod
+    def create_node(cls, value):
+        value_class = value.__class__ or value.__type__
+        for value_classes, node_class in cls.__node_classes.iteritems():
+            if issubclass(value_class, value_classes):
+               return node_class(value)
+
 class TypedNode(Node):
     types = None
 
@@ -77,46 +94,58 @@ class TypedNode(Node):
         self._check_type(value)
         super(TypedNode, self).set(value)
 
-
+@Node.register
 class StringNode(TypedNode):
     types = (unicode, str)
 
+
+@Node.register
 class NumberNode(TypedNode):
     types = (int, float)
 
-class ArrayNode(TypedNode):
-    types = (list, tuple)
 
-class DictNode(TypedNode):
-    types = (dict,)
-
-TYPED_NODE_CLASSES = (StringNode, NumberNode, ArrayNode, )
-
-class StructuredNode(DictNode):
-    def dump(self):
-        result = {}
-        for key, value in self._value.iteritems():
-            result[key] = value.dump()
-        return result
-
+class AbstractCollectionNode(TypedNode):
+    types = None
+    _default_value = None
     def __init__(self, value, name=None, parent=None):
-        super(StructuredNode, self).__init__({}, name, parent)
-        for key, v in value.items():
-            value_class = v.__class__ or v.__type__
-            for node_class in TYPED_NODE_CLASSES+(self.__class__,):
-                if issubclass(value_class, node_class.types):
-                    self[key] = node_class(v)
-                    break
+        super(AbstractCollectionNode, self).__init__(deepcopy(self._default_value), name, parent)
+        self._process_subnodes(value)
 
-    def _check_type_item(self, value):
-        if not issubclass(value.__class__, Node):
-            raise NotImplementedError
+    def dump(self):
+        raise NotImplementedError
+
+    def _process_subnodes(self, value):
+        raise NotImplementedError
 
     def __getitem__(self, item):
         return self._value[item]
 
     def __iter__(self):
         return iter(self._value)
+
+    def _check_type_item(self, value):
+        if not issubclass(value.__class__, Node):
+            raise NotImplementedError
+
+
+@Node.register
+class StructuredNode(AbstractCollectionNode):
+    types = (dict,)
+    _default_value = {}
+    def dump(self):
+        result = {}
+        for key, value in self._value.iteritems():
+            result[key] = value.dump()
+        return result
+
+
+
+    def _process_subnodes(self, value):
+        for key, v in value.items():
+            self[key] = Node.create_node(v)
+
+
+
 
     def keys(self):
         return self._value.keys()
@@ -142,3 +171,25 @@ class StructuredNode(DictNode):
         self._value[new_name] = self._value[old_name]
         del self._value[old_name]
         self._value[new_name].name = new_name
+
+
+@Node.register
+class ArrayNode(AbstractCollectionNode):
+    types = (list, tuple)
+    _default_value = []
+
+    def __iter__(self):
+        return iter(self._value)
+
+    def __getitem__(self, item):
+        return getitem(self._value, item)
+
+
+    def dump(self):
+        return [v.dump() for v in self._value]
+
+
+
+    def _process_subnodes(self, value):
+        for v in value:
+            self._value.append(Node.create_node(v))

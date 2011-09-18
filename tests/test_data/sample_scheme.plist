@@ -2,57 +2,60 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>Ships</key>
+	<key>Objects1</key>
 	<dict>
 		<key>Description</key>
-		<string>Кораблики</string>
+		<string>Objects first type</string>
 		<key>ElementStructure</key>
 		<dict>
-			<key>Speed</key>
+			<key>Some select from strings</key>
+			<dict>
+				<key>Options</key>
+				<array>
+					<string>str1</string>
+					<string>str2</string>
+					<string>str3</string>
+				</array>
+				<key>Type</key>
+				<string>Select</string>
+				<key>Description</key>
+				<string>You can select string from list</string>
+			</dict>
+			<key>Some number</key>
 			<dict>
 				<key>Description</key>
-				<string>Скорость</string>
+				<string>You can enter number</string>
 				<key>Type</key>
 				<string>Number</string>
 			</dict>
-			<!--<key>Parts</key>-->
-			<!--<dict>-->
-				<!--<key>ObjectsPath</key>-->
-				<!--<string>Parts</string>-->
-				<!--<key>Description</key>-->
-				<!--&lt;!&ndash;<string>Части караблика</string>&ndash;&gt;-->
-				<!--&lt;!&ndash;<key>Type</key>&ndash;&gt;-->
-				<!--&lt;!&ndash;<string>Array</string>&ndash;&gt;-->
-			<!--</dict>-->
-			<key>Name</key>
+			<key>Some string</key>
 			<dict>
 				<key>Description</key>
-				<string>Имя кораблика</string>
+				<string>You can enter string</string>
 				<key>Type</key>
 				<string>String</string>
 			</dict>
-            <key>Some array of ints</key>
+			<key>Some array of ints</key>
 			<dict>
 				<key>ElementScheme</key>
 				<dict>
-                    <key>Type</key>
-                    <string>Number</string>
+					<key>Type</key>
+					<string>Number</string>
 				</dict>
 				<key>Description</key>
-				<string>Массивчик интов</string>
+				<string>Array of numbers</string>
 				<key>Type</key>
 				<string>Array</string>
 			</dict>
-
-            <key>Some array of strings</key>
+			<key>Some array of strings</key>
 			<dict>
 				<key>ElementScheme</key>
 				<dict>
-                    <key>Type</key>
-                    <string>String</string>
+					<key>Type</key>
+					<string>String</string>
 				</dict>
 				<key>Description</key>
-				<string>Массивчик стрингов</string>
+				<string>Array of strings</string>
 				<key>Type</key>
 				<string>Array</string>
 			</dict>
@@ -60,25 +63,48 @@
 		<key>Type</key>
 		<string>StructuredDictionary</string>
 	</dict>
-	<key>Parts</key>
+	<key>Objects2</key>
 	<dict>
 		<key>Description</key>
-		<string>Части корабликов</string>
+		<string>Objects 2</string>
 		<key>ElementStructure</key>
 		<dict>
-			<key>Sprite</key>
+			<key>Some select from objects</key>
+			<dict>
+				<key>OptionPath</key>
+				<string>/Objects1</string>
+				<key>Type</key>
+				<string>SelectObject</string>
+				<key>Description</key>
+				<string>You can select object from list</string>
+			</dict>
+			<key>Some select from ints</key>
+			<dict>
+				<key>Options</key>
+				<array>
+					<integer>0</integer>
+					<integer>35</integer>
+					<integer>6</integer>
+					<string>3</string>
+				</array>
+				<key>Type</key>
+				<string>Select</string>
+				<key>Description</key>
+				<string>You can select number from list</string>
+			</dict>
+			<key>Some filename</key>
 			<dict>
 				<key>FilenameMask</key>
 				<string>*.png</string>
 				<key>Description</key>
-				<string>Спрайт</string>
+				<string>Select file</string>
 				<key>Type</key>
 				<string>Filename</string>
 			</dict>
-			<key>Name</key>
+			<key>Some string</key>
 			<dict>
 				<key>Description</key>
-				<string>Имя части</string>
+				<string>You can enter string</string>
 				<key>Type</key>
 				<string>String</string>
 			</dict>

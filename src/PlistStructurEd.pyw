@@ -69,15 +69,15 @@ class MainWindow(QMainWindow):
     def save_data_as(self):
 
         self.save_filename = unicode(QFileDialog.getSaveFileName(self, "Save File",
-                            "newpropetylist.plist",
+                            "New Structured Property List.plist",
                             "Property Lists (*.plist)"))
         if self.save_filename:
-            self.save()
+            self.save_data()
 
 
     def load_data(self):
         self.save_filename = unicode(QFileDialog.getOpenFileName(self, "Open File",
-#                            "newpropetylist.plist",
+#                            "sample_data.plist",
                             "Property Lists (*.plist)"))
         if self.save_filename:
             self.__load_data(StructuredNode(plistlib.readPlist(self.save_filename)))
@@ -85,7 +85,7 @@ class MainWindow(QMainWindow):
 
     def load_scheme(self):
         self.scheme_name = unicode(QFileDialog.getOpenFileName(self, "Open File",
-#                            "newpropetylist.plist",
+#                            "sample_data.plist",
                             "Property Lists (*.plist)"))
         if self.scheme_name:
             self.__load_scheme(StructuredNode(plistlib.readPlist(self.scheme_name)))
@@ -99,9 +99,11 @@ class MainWindow(QMainWindow):
     def __load_data(self, data):
         self.__data = data
 
-    def _load_data_and_scheme(self, data, scheme):
-        self.__load_scheme(scheme)
-        self.__load_data(data)
+    def _load_data_and_scheme(self, data_filename, scheme_filename):
+        self.__load_scheme(StructuredNode(plistlib.readPlist(scheme_filename)))
+        self.scheme_name = scheme_filename
+        self.__load_data(StructuredNode(plistlib.readPlist(data_filename)))
+        self.save_filename = data_filename
 
 
 if __name__=="__main__":
@@ -116,10 +118,8 @@ if __name__=="__main__":
 
     if DEBUG:
         scheme_filename = os.path.join(os.getcwd(), "..", "tests","test_data","sample_scheme.plist")
-
-        scheme = StructuredNode(plistlib.readPlist(scheme_filename))
-        data = StructuredNode({"Ships":{"Ship1":{},"Ship2":{}}, "Parts":{"part1":{}, "part2":{}}})
-        mainwindow._load_data_and_scheme(data, scheme)
+        data_filename = os.path.join(os.getcwd(), "..", "tests","test_data","sample_data.plist")
+        mainwindow._load_data_and_scheme(data_filename, scheme_filename)
 
 
 
