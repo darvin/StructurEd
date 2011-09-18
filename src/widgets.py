@@ -1,16 +1,8 @@
 from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QLineEdit, QSpinBox, QWidget, QVBoxLayout, QListWidget, QPushButton, QHBoxLayout, QListWidgetItem, QGridLayout, QLabel, QAbstractItemView, QComboBox
-from models import StructuredNode, StringNode, NumberNode, ArrayNode, Path
+from models import StructuredNode, StringNode, NumberNode, ArrayNode, Path, Node
 from utils import get_or_create_dict_element
 
-DEFAULT_VALUES = {
-    "StructuredDictionary": lambda: StructuredNode({}),
-    "Filename":lambda: StringNode(""),
-    "String":lambda: StringNode(""),
-    "Number":lambda: NumberNode(0),
-    "Array":lambda: ArrayNode(()),
-    "Select": lambda : StringNode(""),
-}
 
 
 
@@ -39,6 +31,8 @@ class NodeWidget(object):
 
 
 
+
+
     @classmethod
     def register(cls, widget_class): 
         if not issubclass(widget_class, cls):
@@ -49,6 +43,11 @@ class NodeWidget(object):
     @classmethod
     def create_node_widget(cls, name, data, scheme, **kwargs):
         return cls.__node_widgets_classes[scheme["Type"].get()](name, data, scheme, **kwargs)
+
+    @classmethod
+    def get_default_data(cls, scheme):
+        return cls.__node_widgets_classes[scheme["Type"].get()]._get_default_data(scheme)
+
 
 @NodeWidget.register
 class StringWidget(QLineEdit, NodeWidget):
@@ -63,6 +62,9 @@ class StringWidget(QLineEdit, NodeWidget):
     def dump(self):
         self.data.set(unicode(self.text()))
 
+    @classmethod
+    def _get_default_data(cls, scheme):
+        return StringNode("")
 @NodeWidget.register
 class FilenameWidget(StringWidget):
     data_type = "Filename"
@@ -79,6 +81,11 @@ class NumberWidget(QSpinBox, NodeWidget):
 
     def dump(self):
         self.data.set(self.value())
+
+
+    @classmethod
+    def _get_default_data(cls, scheme):
+        return NumberNode("")
 
 
 
@@ -107,7 +114,7 @@ class ArrayWidget(QWidget, NodeWidget):
 
 
         self.element_scheme = self.scheme["ElementScheme"]
-        self.new_data = DEFAULT_VALUES[self.element_scheme["Type"].get()]()
+        self.new_data = NodeWidget.get_default_data(self.element_scheme)
         self.add_widget = NodeWidget.create_node_widget("__not_exist", self.new_data, self.element_scheme)
         hlayout.addWidget(self.add_widget)
 
@@ -122,7 +129,7 @@ class ArrayWidget(QWidget, NodeWidget):
         self.load()
 
     def add_item(self):
-        self.data.set(self.data.get()+(self.new_data.get(),))
+        self.data.set(list(self.data.get())+[self.new_data.get(),])
         self.load()
 
     def __createItem(self, itemname):
@@ -142,6 +149,11 @@ class ArrayWidget(QWidget, NodeWidget):
         for item in self.data.get():
             self.__createItem(unicode(item))
 
+
+    @classmethod
+    def _get_default_data(cls, scheme):
+        return ArrayNode([])
+
 @NodeWidget.register
 class StructuredWidget(QWidget, NodeWidget):
     def __init__(self, name, data, scheme, open_func, parent=None):
@@ -155,7 +167,7 @@ class StructuredWidget(QWidget, NodeWidget):
 
         i = 0
         for child_name, child_scheme in self.scheme.iteritems():
-            widget = NodeWidget.create_node_widget(child_name, get_or_create_dict_element(self.data, child_name, DEFAULT_VALUES[child_scheme["Type"].get()]()), child_scheme, parent=self)
+            widget = NodeWidget.create_node_widget(child_name, get_or_create_dict_element(self.data, child_name, NodeWidget.get_default_data(child_scheme)), child_scheme, parent=self)
             widget.load()
             if widget.two_rows:
                 widget_col = 1
@@ -182,6 +194,11 @@ class StructuredWidget(QWidget, NodeWidget):
 
     def load(self):
         pass
+
+
+    @classmethod
+    def _get_default_data(cls, scheme):
+        return StructuredNode({})
 
 
 
@@ -252,6 +269,10 @@ class StructuredDictionaryWidget(QWidget, NodeWidget):
         for key in self.data.keys():
             self.__createItem(key)
 
+    @classmethod
+    def _get_default_data(cls, scheme):
+        return StructuredNode({})
+
 
 @NodeWidget.register
 class SelectWidget(QComboBox, NodeWidget):
@@ -276,3 +297,8 @@ class SelectWidget(QComboBox, NodeWidget):
 
     def dump(self):
         self.data.set(self.options[self.itemData(self.currentIndex()).toPyObject()].get())
+
+
+    @classmethod
+    def _get_default_data(cls, scheme):
+        return Node.create_node(scheme["Options"][0].get())

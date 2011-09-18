@@ -4,29 +4,7 @@
 <dict>
 	<key>Objects1</key>
 	<dict>
-		<key>Ship1</key>
-		<dict>
-			<key>Some array of ints</key>
-			<array>
-				<integer>0</integer>
-				<integer>4</integer>
-				<integer>5</integer>
-				<integer>75</integer>
-			</array>
-			<key>Some array of strings</key>
-			<array>
-				<string>string 1</string>
-				<string>string 2</string>
-				<string>string 3</string>
-			</array>
-			<key>Some number</key>
-			<integer>6</integer>
-			<key>Some select from strings</key>
-			<string>str2</string>
-			<key>Some string</key>
-			<string>some string</string>
-		</dict>
-		<key>Ship2</key>
+		<key>Object first type #1</key>
 		<dict>
 			<key>Some array of ints</key>
 			<array>
@@ -44,13 +22,41 @@
 			<key>Some string</key>
 			<string>asdf</string>
 		</dict>
+		<key>Object first type #2</key>
+		<dict>
+			<key>Some array of ints</key>
+			<array>
+				<integer>0</integer>
+				<integer>4</integer>
+				<integer>5</integer>
+				<integer>75</integer>
+			</array>
+			<key>Some array of strings</key>
+			<array>
+				<string>string 1</string>
+				<string>string 2</string>
+				<string>string 3</string>
+			</array>
+			<key>Some number</key>
+			<integer>6</integer>
+			<key>Some select from strings</key>
+			<string>str1</string>
+			<key>Some string</key>
+			<string>some string</string>
+		</dict>
 	</dict>
 	<key>Objects2</key>
 	<dict>
-		<key>part1</key>
+		<key>object second type #1</key>
 		<dict>
+			<key>Some filename</key>
+			<string>somefile.png</string>
+			<key>Some select from ints</key>
+			<integer>35</integer>
+			<key>Some string</key>
+			<string>stirng1</string>
 		</dict>
-		<key>part2</key>
+		<key>object second type #2</key>
 		<dict>
 			<key>Some filename</key>
 			<string></string>

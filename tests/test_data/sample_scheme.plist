@@ -69,15 +69,15 @@
 		<string>Objects 2</string>
 		<key>ElementStructure</key>
 		<dict>
-			<key>Some select from objects</key>
-			<dict>
-				<key>OptionPath</key>
-				<string>/Objects1</string>
-				<key>Type</key>
-				<string>SelectObject</string>
-				<key>Description</key>
-				<string>You can select object from list</string>
-			</dict>
+			<!--<key>Some select from objects</key>-->
+			<!--<dict>-->
+				<!--<key>OptionPath</key>-->
+				<!--<string>/Objects1</string>-->
+				<!--<key>Type</key>-->
+				<!--<string>SelectObject</string>-->
+				<!--<key>Description</key>-->
+				<!--<string>You can select object from list</string>-->
+			<!--</dict>-->
 			<key>Some select from ints</key>
 			<dict>
 				<key>Options</key>
