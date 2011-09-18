@@ -103,7 +103,7 @@
                     <string>SelectObject</string>
 				</dict>
 				<key>Description</key>
-				<string>Array of ints with select</string>
+				<string>Array of objects with select</string>
 				<key>Type</key>
 				<string>Array</string>
 			</dict>
