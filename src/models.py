@@ -10,12 +10,10 @@ class Path(tuple):
 
 
     def get(self, root_node):
-        print "getting ", self
         if not root_node.is_root():
             root_node = root_node.get_root()
         current_node = root_node
         for name in self:
-            print current_node
             if name in current_node:
                 current_node = current_node[name]
             elif "ElementStructure" in current_node:
@@ -34,7 +32,6 @@ class Path(tuple):
 class Node(object):
     __node_classes = {}
     def __init__(self, value, name=None, parent=None):
-        print "Creating ", name, self.__class__
         self._value = value
         if not parent:
             self.name = "root"

@@ -24,7 +24,6 @@ class TestSequenceFunctions(unittest.TestCase):
         path_str1 = self.str1.path()
         self.assertEqual(('child2', 'subchild', 'str'), path_str1)
         self.assertEqual(path_str1.get(self.root), self.str1)
-        print
 
     def test_rename_item(self):
         self.root["child1"].rename_item("int1", "newint1")

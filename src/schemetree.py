@@ -35,7 +35,6 @@ class SchemeTreeWidget(QTreeWidget):
         item.setExpanded(True)
         if type not in self.__icons_cache:
             self.__icons_cache[type] = QIcon(":/icons/small/datatypes/{}.png".format(type))
-        print self.__icons_cache
         item.setIcon(0, self.__icons_cache[type])
         return item
 
