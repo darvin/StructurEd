@@ -1,5 +1,5 @@
 from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QLineEdit, QSpinBox, QWidget, QVBoxLayout, QListWidget, QPushButton, QHBoxLayout, QListWidgetItem, QGridLayout, QLabel, QAbstractItemView, QComboBox, QIntValidator, QDoubleValidator
+from PyQt4.QtGui import QLineEdit, QSpinBox, QWidget, QVBoxLayout, QListWidget, QPushButton, QHBoxLayout, QListWidgetItem, QGridLayout, QLabel, QAbstractItemView, QComboBox, QIntValidator, QDoubleValidator, QCheckBox
 from models import StructuredNode, StringNode, IntegerNode, RealNode, BooleanNode, ArrayNode, Path, Node
 from utils import get_or_create_dict_element
 
@@ -108,6 +108,22 @@ class RealWidget(StringWidget):
         return RealNode(0.0)
 
 
+@NodeWidget.register
+class BooleanWidget(QCheckBox, NodeWidget):
+    data_type = "Boolean"
+    def __init__(self, name, data, scheme, parent=None):
+        QCheckBox.__init__(self, parent)
+        NodeWidget.__init__(self, name, data, scheme)
+        self.stateChanged.connect(self.dump)
+    def load(self):
+        self.setChecked(self.data.get())
+
+    def dump(self):
+        self.data.set(self.isChecked())
+
+    @classmethod
+    def _get_default_data(cls, scheme):
+        return BooleanNode(False)
 
 @NodeWidget.register
 class ArrayWidget(QWidget, NodeWidget):

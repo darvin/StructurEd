@@ -29,6 +29,8 @@
 				<string>str1</string>
 				<string>str1</string>
 			</array>
+			<key>Some boolean</key>
+			<true/>
 			<key>Some integer</key>
 			<integer>324234</integer>
 			<key>Some number</key>
@@ -58,8 +60,14 @@
 			<key>Some array of strings with select</key>
 			<array>
 			</array>
+			<key>Some boolean</key>
+			<false/>
+			<key>Some integer</key>
+			<integer>0</integer>
 			<key>Some number</key>
 			<integer>6</integer>
+			<key>Some real</key>
+			<real>0.0</real>
 			<key>Some select from strings</key>
 			<string>str1</string>
 			<key>Some string</key>

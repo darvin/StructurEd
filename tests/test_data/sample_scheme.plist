@@ -35,6 +35,13 @@
 				<key>Type</key>
 				<string>Real</string>
 			</dict>
+            <key>Some boolean</key>
+			<dict>
+				<key>Description</key>
+				<string>You can enter bool</string>
+				<key>Type</key>
+				<string>Boolean</string>
+			</dict>
 			<key>Some string</key>
 			<dict>
 				<key>Description</key>
