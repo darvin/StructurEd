@@ -1,0 +1,6 @@
+include src/StructurEd.pyw
+include resources/icons/small/datatypes/*.png
+include resources/icons/*.png
+include resources/application_icon/*
+include resources/resources.qrc
+include README.md
