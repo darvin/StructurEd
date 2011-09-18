@@ -129,7 +129,7 @@ class ArrayWidget(QWidget, NodeWidget):
         self.load()
 
     def add_item(self):
-        self.data.set(list(self.data.get())+[self.new_data.get(),])
+        self.data.set(list(self.data.get())+[Node.create_node(self.new_data.get()),])
         self.load()
 
     def __createItem(self, itemname):
