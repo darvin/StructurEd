@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Objects1</key>
+	<dict>
+		<key>Description</key>
+		<string>Objects first type</string>
+		<key>ElementStructure</key>
+		<dict>
+			<key>Some select from strings</key>
+			<dict>
+				<key>Options</key>
+				<array>
+					<string>str1</string>
+					<string>str2</string>
+					<string>str3</string>
+				</array>
+				<key>Type</key>
+				<string>Select</string>
+				<key>Description</key>
+				<string>You can select string from list</string>
+			</dict>
+			<key>Some integer</key>
+			<dict>
+				<key>Description</key>
+				<string>You can enter number</string>
+				<key>Type</key>
+				<string>Integer</string>
+			</dict>
+            <key>Some real</key>
+			<dict>
+				<key>Description</key>
+				<string>You can enter number (like 3.4)</string>
+				<key>Type</key>
+				<string>Real</string>
+			</dict>
+            <key>Some boolean</key>
+			<dict>
+				<key>Description</key>
+				<string>You can enter bool</string>
+				<key>Type</key>
+				<string>Boolean</string>
+			</dict>
+			<key>Some string</key>
+			<dict>
+				<key>Description</key>
+				<string>You can enter string</string>
+				<key>Type</key>
+				<string>String</string>
+			</dict>
+			<key>Some array of ints</key>
+			<dict>
+				<key>ElementScheme</key>
+				<dict>
+					<key>Type</key>
+					<string>Integer</string>
+				</dict>
+				<key>Description</key>
+				<string>Array of numbers</string>
+				<key>Type</key>
+				<string>Array</string>
+			</dict>
+			<key>Some array of strings</key>
+			<dict>
+				<key>ElementScheme</key>
+				<dict>
+					<key>Type</key>
+					<string>String</string>
+				</dict>
+				<key>Description</key>
+				<string>Array of strings</string>
+				<key>Type</key>
+				<string>Array</string>
+			</dict>
+
+            <key>Some array of strings with select</key>
+			<dict>
+				<key>ElementScheme</key>
+				<dict>
+					<key>Options</key>
+                    <array>
+                        <string>str1</string>
+                        <string>str2</string>
+                        <string>str3</string>
+                    </array>
+                    <key>Type</key>
+                    <string>Select</string>
+				</dict>
+				<key>Description</key>
+				<string>Array of strings with select</string>
+				<key>Type</key>
+				<string>Array</string>
+			</dict>
+
+            <key>Some array of objects with select</key>
+			<dict>
+				<key>ElementScheme</key>
+				<dict>
+					<key>OptionPath</key>
+                    <string>/Objects2</string>
+                    <key>Type</key>
+                    <string>SelectObject</string>
+				</dict>
+				<key>Description</key>
+				<string>Array of objects with select</string>
+				<key>Type</key>
+				<string>Array</string>
+			</dict>
+		</dict>
+		<key>Type</key>
+		<string>StructuredDictionary</string>
+	</dict>
+	<key>Objects2</key>
+	<dict>
+		<key>Description</key>
+		<string>Objects 2</string>
+		<key>ElementStructure</key>
+		<dict>
+			<key>Some select from objects</key>
+			<dict>
+				<key>OptionPath</key>
+				<string>/Objects1</string>
+				<key>Type</key>
+				<string>SelectObject</string>
+				<key>Description</key>
+				<string>You can select object from list</string>
+			</dict>
+			<key>Some select from ints</key>
+			<dict>
+				<key>Options</key>
+				<array>
+					<integer>0</integer>
+					<integer>35</integer>
+					<integer>6</integer>
+					<string>3</string>
+				</array>
+				<key>Type</key>
+				<string>Select</string>
+				<key>Description</key>
+				<string>You can select number from list</string>
+			</dict>
+			<key>Some filename</key>
+			<dict>
+				<key>FilenameMask</key>
+				<string>*.plist</string>
+				<key>Description</key>
+				<string>Select some plist</string>
+				<key>Type</key>
+				<string>Filename</string>
+                <key>WithoutPath</key>
+                <false/>
+			</dict>
+            <key>Some sprite filename</key>
+			<dict>
+				<!--<key>FilenameMask</key>-->
+				<!--<string>*.png</string>-->
+				<key>Description</key>
+				<string>Select some png</string>
+				<key>Type</key>
+				<string>FilenameImage</string>
+                <key>WithoutPath</key>
+                <true/>
+                <key>BasePath</key>
+                <string>~/Workspace/PlistStructurEd/resources/icons</string>
+			</dict>
+			<key>Some string</key>
+			<dict>
+				<key>Description</key>
+				<string>You can enter string</string>
+				<key>Type</key>
+				<string>String</string>
+			</dict>
+
+            <key>Some array of ints with select</key>
+			<dict>
+				<key>ElementScheme</key>
+				<dict>
+					<key>Options</key>
+                    <array>
+                        <integer>1</integer>
+                        <integer>10</integer>
+                        <integer>100</integer>
+                    </array>
+                    <key>Type</key>
+                    <string>Select</string>
+				</dict>
+				<key>Description</key>
+				<string>Array of ints with select</string>
+				<key>Type</key>
+				<string>Array</string>
+			</dict>
+		</dict>
+		<key>Type</key>
+		<string>StructuredDictionary</string>
+	</dict>
+</dict>
+</plist>
