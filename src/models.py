@@ -100,9 +100,18 @@ class StringNode(TypedNode):
 
 
 @Node.register
-class NumberNode(TypedNode):
-    types = (int, float)
+class IntegerNode(TypedNode):
+    types = (int, )
 
+
+@Node.register
+class RealNode(TypedNode):
+    types = (float, )
+
+
+@Node.register
+class BooleanNode(TypedNode):
+    types = (bool, )
 
 class AbstractCollectionNode(TypedNode):
     types = None

@@ -1,6 +1,6 @@
 from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QLineEdit, QSpinBox, QWidget, QVBoxLayout, QListWidget, QPushButton, QHBoxLayout, QListWidgetItem, QGridLayout, QLabel, QAbstractItemView, QComboBox
-from models import StructuredNode, StringNode, NumberNode, ArrayNode, Path, Node
+from PyQt4.QtGui import QLineEdit, QSpinBox, QWidget, QVBoxLayout, QListWidget, QPushButton, QHBoxLayout, QListWidgetItem, QGridLayout, QLabel, QAbstractItemView, QComboBox, QIntValidator, QDoubleValidator
+from models import StructuredNode, StringNode, IntegerNode, RealNode, BooleanNode, ArrayNode, Path, Node
 from utils import get_or_create_dict_element
 
 
@@ -69,23 +69,43 @@ class StringWidget(QLineEdit, NodeWidget):
 class FilenameWidget(StringWidget):
     data_type = "Filename"
 
+
 @NodeWidget.register
-class NumberWidget(QSpinBox, NodeWidget):
-    data_type = "Number"
+class IntegerWidget(StringWidget):
+    data_type = "Integer"
+
     def __init__(self, name, data, scheme, parent=None):
-        QSpinBox.__init__(self, parent)
-        NodeWidget.__init__(self, name, data, scheme)
-        self.editingFinished.connect(self.dump)
+        super(IntegerWidget, self).__init__(name, data, scheme, parent)
+        validator = QIntValidator(self)
+        self.setValidator(validator)
+
     def load(self):
-        self.setValue(self.data.get())
+        self.setText(unicode(self.data.get()))
 
     def dump(self):
-        self.data.set(self.value())
-
+        self.data.set(int(self.text()))
 
     @classmethod
     def _get_default_data(cls, scheme):
-        return NumberNode("")
+        return IntegerNode(0)
+
+@NodeWidget.register
+class RealWidget(StringWidget):
+    data_type = "Real"
+    def __init__(self, name, data, scheme, parent=None):
+        super(RealWidget, self).__init__(name, data, scheme, parent)
+        validator = QDoubleValidator(self)
+        self.setValidator(validator)
+        
+    def load(self):
+        self.setText(unicode(self.data.get()))
+
+    def dump(self):
+        self.data.set(float(self.text()))
+
+    @classmethod
+    def _get_default_data(cls, scheme):
+        return RealNode(0.0)
 
 
 

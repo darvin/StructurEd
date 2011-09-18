@@ -21,12 +21,19 @@
 				<key>Description</key>
 				<string>You can select string from list</string>
 			</dict>
-			<key>Some number</key>
+			<key>Some integer</key>
 			<dict>
 				<key>Description</key>
 				<string>You can enter number</string>
 				<key>Type</key>
-				<string>Number</string>
+				<string>Integer</string>
+			</dict>
+            <key>Some real</key>
+			<dict>
+				<key>Description</key>
+				<string>You can enter number (like 3.4)</string>
+				<key>Type</key>
+				<string>Real</string>
 			</dict>
 			<key>Some string</key>
 			<dict>
@@ -40,7 +47,7 @@
 				<key>ElementScheme</key>
 				<dict>
 					<key>Type</key>
-					<string>Number</string>
+					<string>Integer</string>
 				</dict>
 				<key>Description</key>
 				<string>Array of numbers</string>

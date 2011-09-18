@@ -29,12 +29,16 @@
 				<string>str1</string>
 				<string>str1</string>
 			</array>
+			<key>Some integer</key>
+			<integer>324234</integer>
 			<key>Some number</key>
 			<integer>23</integer>
+			<key>Some real</key>
+			<real>300234.0</real>
 			<key>Some select from strings</key>
 			<string>str2</string>
 			<key>Some string</key>
-			<string>asdf</string>
+			<string>asdfdsf</string>
 		</dict>
 		<key>Object first type #2</key>
 		<dict>

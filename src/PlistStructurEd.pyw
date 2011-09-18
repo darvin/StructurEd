@@ -1,9 +1,7 @@
-from copy import deepcopy
 import os
-from models import StructuredNode, Path, ArrayNode, NumberNode, StringNode
+from models import StructuredNode
 from nodewindow import NodeWindow
 from schemetree import SchemeTreeWidget
-from widgets import StructuredWidget
 
 __author__ = 'darvin'
 import plistlib
