@@ -148,6 +148,8 @@
 				<string>Select file</string>
 				<key>Type</key>
 				<string>Filename</string>
+                <key>WithoutPath</key>
+                <true/>
 			</dict>
 			<key>Some string</key>
 			<dict>

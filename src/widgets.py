@@ -1,5 +1,6 @@
+import os
 from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QLineEdit, QSpinBox, QWidget, QVBoxLayout, QListWidget, QPushButton, QHBoxLayout, QListWidgetItem, QGridLayout, QLabel, QAbstractItemView, QComboBox, QIntValidator, QDoubleValidator, QCheckBox
+from PyQt4.QtGui import QLineEdit, QSpinBox, QWidget, QVBoxLayout, QListWidget, QPushButton, QHBoxLayout, QListWidgetItem, QGridLayout, QLabel, QAbstractItemView, QComboBox, QIntValidator, QDoubleValidator, QCheckBox, QFileDialog
 from models import StructuredNode, StringNode, IntegerNode, RealNode, BooleanNode, ArrayNode, Path, Node
 from utils import get_or_create_dict_element, layout_set_sm_and_mrg, StyledButton
 
@@ -89,8 +90,48 @@ class StringWidget(QLineEdit, NodeWidget):
     def _get_default_data(cls, scheme, data):
         return StringNode("")
 @NodeWidget.register
-class FilenameWidget(StringWidget):
+class FilenameWidget(QWidget, NodeWidget):
     data_type = "Filename"
+    def __init__(self, name, data, scheme, parent=None):
+        QWidget.__init__(self, parent)
+        NodeWidget.__init__(self, name, data, scheme)
+        if "FilenameMask" in self.scheme:
+            self.filename_mask =  self.scheme["FilenameMask"].get()
+        else:
+            self.filename_mask = "*"
+        if "WithoutPath" in self.scheme:
+            self.without_path =  self.scheme["WithoutPath"].get()
+        else:
+            self.without_path = False
+
+
+        self.layout = QHBoxLayout(self)
+        self.layout.setMargin(0)
+        self.layout.setContentsMargins(0,0,0,0)
+        self._browse_button = SmallSquareButton("...",self)
+        self._browse_button.clicked.connect(self.browse)
+        self._text = QLineEdit(self)
+        self._text.textChanged.connect(self.dump)
+        self.layout.addWidget(self._text)
+        self.layout.addWidget(self._browse_button)
+
+
+    def load(self):
+        self._text.setText(unicode(self.data.get()))
+
+    def dump(self):
+        self.data.set(unicode(self._text.text()))
+
+    def browse(self):
+        file_name = QFileDialog.getOpenFileName(self, "Select file", filter=self.filename_mask)
+        if file_name:
+            if self.without_path:
+                file_name = os.path.basename(unicode(file_name))
+            self._text.setText(file_name)
+
+    @classmethod
+    def _get_default_data(cls, scheme, data):
+        return StringNode("")
 
 
 @NodeWidget.register
