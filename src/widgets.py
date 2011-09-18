@@ -61,7 +61,7 @@ class StringWidget(QLineEdit, NodeWidget):
     def __init__(self, name, data, scheme, parent=None):
         QLineEdit.__init__(self, parent)
         NodeWidget.__init__(self, name, data, scheme)
-        self.editingFinished.connect(self.dump)
+        self.textEdited.connect(self.dump)
     def load(self):
         self.setText(unicode(self.data.get()))
 
