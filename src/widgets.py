@@ -1,9 +1,26 @@
 from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QLineEdit, QSpinBox, QWidget, QVBoxLayout, QListWidget, QPushButton, QHBoxLayout, QListWidgetItem, QGridLayout, QLabel, QAbstractItemView, QComboBox, QIntValidator, QDoubleValidator, QCheckBox
 from models import StructuredNode, StringNode, IntegerNode, RealNode, BooleanNode, ArrayNode, Path, Node
-from utils import get_or_create_dict_element
+from utils import get_or_create_dict_element, layout_set_sm_and_mrg, StyledButton
 
 
+class SmallSquareButton(StyledButton):
+    style = """
+QPushButton {
+    border: 1px solid #979797;
+    border-radius: 0px;
+    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                   stop: 0 #F9F9F9, stop: 1 #E6E6E6);
+    min-width: 20px;
+    min-height: 20px;
+    max-width: 20px;
+    max-height: 20px;
+}
+QPushButton:pressed {
+    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                           stop: 0 #dadbde, stop: 1 #f6f7fa);
+    }
+"""
 
 
 class NodeWidget(object):
@@ -139,17 +156,18 @@ class ArrayWidget(QWidget, NodeWidget):
         QWidget.__init__(self, parent)
         NodeWidget.__init__(self, name, data, scheme)
         self.layout = QVBoxLayout(self)
-#        self.setLayout(self.layout)
+        self.layout.setMargin(0)
+        self.layout.setContentsMargins(0,0,0,0)
         self._listwidget = QListWidget(self)
         self.layout.addWidget(self._listwidget)
         hlayout = QHBoxLayout()
         self.layout.addLayout(hlayout)
-        self._add_button = QPushButton("add", self)
+        self._add_button = SmallSquareButton("+", self)
         hlayout.addWidget(self._add_button)
         self._add_button.clicked.connect(self.add_item)
 
 
-        self._delete_button = QPushButton("del", self)
+        self._delete_button = SmallSquareButton("-", self)
         hlayout.addWidget(self._delete_button)
         self._delete_button.clicked.connect(self.delete_item)
 
@@ -157,7 +175,7 @@ class ArrayWidget(QWidget, NodeWidget):
 
         self.element_scheme = self.scheme["ElementScheme"]
         self.new_data = NodeWidget.get_default_data(self.element_scheme, self.data)
-
+        hlayout.addStretch(1)
         self.add_widget = NodeWidget.create_node_widget("__not_exist", self.new_data, self.element_scheme)
         hlayout.addWidget(self.add_widget)
 
@@ -253,24 +271,29 @@ class StructuredDictionaryWidget(QWidget, NodeWidget):
         QWidget.__init__(self, parent)
         NodeWidget.__init__(self, name, data, scheme)
         self.layout = QVBoxLayout(self)
-#        self.setLayout(self.layout)
+        self.layout.setMargin(0)
+
         self._listwidget = QListWidget(self)
         self.layout.addWidget(self._listwidget)
         hlayout = QHBoxLayout()
+        self.layout.setMargin(0)
+        self.layout.setContentsMargins(0,0,0,0)
         self.layout.addLayout(hlayout)
-        self._add_button = QPushButton("add", self)
+        self._add_button = SmallSquareButton("+", self)
         hlayout.addWidget(self._add_button)
         self._add_button.clicked.connect(self.create_item)
 
 
-        self._edit_button = QPushButton("edit", self)
-        hlayout.addWidget(self._edit_button)
-        self._edit_button.clicked.connect(self.edit_item)
+#        self._edit_button = SmallSquareButton("edit", self)
+#        hlayout.addWidget(self._edit_button)
+#        self._edit_button.clicked.connect(self.edit_item)
+        self._listwidget.itemDoubleClicked.connect(self.edit_item)
 
-        self._delete_button = QPushButton("del", self)
+        self._delete_button = SmallSquareButton("-", self)
         hlayout.addWidget(self._delete_button)
         self._delete_button.clicked.connect(self.delete_item)
 
+        hlayout.addStretch(1)
 
         self._listwidget.setEditTriggers(QAbstractItemView.EditKeyPressed)
         self._listwidget.itemChanged.connect(self.rename_item)
