@@ -54,6 +54,15 @@ class Node(object):
         else:
             return self
 
+    def get_meta(self):
+        if "__Meta" in self:
+            return self["Meta"]
+        else:
+            if not self.parent:
+                return StructuredNode({}, parent=self)
+            else:
+                return self.parent.get_meta()
+
     def __unicode__(self):
         return unicode(self._value)
 
