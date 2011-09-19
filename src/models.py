@@ -33,6 +33,7 @@ class Node(object):
     __node_classes = {}
     def __init__(self, value, name=None, parent=None):
         self._value = value
+        self.__notify_at_set = []
         if not parent:
             self.name = "root"
         else:
@@ -40,6 +41,9 @@ class Node(object):
                 raise NotImplementedError
             self.name = name
         self.parent = parent
+
+    def add_set_notify(self, func):
+        self.__notify_at_set.append(func)
 
     def is_root(self):
         return self.parent is None
@@ -62,7 +66,12 @@ class Node(object):
     def dump(self):
         return self.get()
 
+    def _notify_set(self):
+        for func in self.__notify_at_set:
+            func()
+
     def set(self, value):
+        self._notify_set()
         self._value = value
 
     def path(self):

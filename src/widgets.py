@@ -32,11 +32,15 @@ class NodeWidget(object):
     def __init__(self, name, data, scheme):
 
         self.data = data
+        self._retain_data()
         self.scheme = scheme
         self.name = name
         self.description =  name
         if "Description" in self.scheme:
             self.description = self.scheme["Description"].get()
+
+    def _retain_data(self):
+        self.data.add_notify(self.load)
 
     def load(self):
         raise NotImplementedError
@@ -259,11 +263,9 @@ class ArrayWidget(QWidget, NodeWidget):
         new_data = list(self.data.get())
         del new_data[row]
         self.data.set(tuple(new_data))
-        self.load()
 
     def add_item(self):
         self.data.set(list(self.data.get())+[Node.create_node(self.new_data.get()),])
-        self.load()
 
     def __createItem(self, itemname):
         item = QListWidgetItem(itemname)
