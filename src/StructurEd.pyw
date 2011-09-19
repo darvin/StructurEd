@@ -18,6 +18,8 @@ import rc
 class MainWindow(QMainWindow):
     def __init__(self, fixed_data_filename=None, fixed_scheme_filename=None):
         super(MainWindow, self).__init__()
+        self.settings = QSettings()
+
         self.save_filename = None
         self.globalMenuBar = QMenuBar()
         if not fixed_scheme_filename:
@@ -34,6 +36,7 @@ class MainWindow(QMainWindow):
             actionSaveAs = QAction(QIcon(":/icons/document-save-as.png"),"Save as...", self)
             actionSaveAs.triggered.connect(self.save_data_as)
             self.__data = StructuredNode({})
+
         else:
             self.__load_data(fixed_data_filename)
 
@@ -56,15 +59,26 @@ class MainWindow(QMainWindow):
         self.scheme_tree_view.load(self.__scheme)
         self.setCentralWidget(self.scheme_tree_view)
 
-        self._load_recent()
+        self._read_settings()
 
-    def _load_recent(self):
-        pass
+    def _read_settings(self):
+        scheme_filename = unicode(self.settings.value('recent_files/scheme').toString())
+        if scheme_filename:
+            self.__load_scheme(scheme_filename)
+        data_filename = unicode(self.settings.value('recent_files/data').toString())
+        if data_filename:
+            self.__load_scheme(data_filename)
+
+    def _write_settings(self):
+        self.settings.setValue('recent_files/data', self.save_filename)
+        self.settings.setValue('recent_files/scheme', self.scheme_filename)
 
     def _open_root(self):
         NodeWindow(self.__data, self.__scheme).show()
 
-
+    def closeEvent(self, event):
+        self._write_settings()
+        event.accept()
 
 
     def save_data(self):
@@ -119,12 +133,13 @@ class MainWindow(QMainWindow):
 if __name__=="__main__":
 
     app = QtGui.QApplication(sys.argv)
-    #qb = StructuredWidget("root", DATA, scheme)
+
+    app.setOrganizationName("SergeyKlimov")
+    app.setOrganizationDomain("darvin.github.com")
+    app.setApplicationName("StructurEd")
     mainwindow = MainWindow()
 
     mainwindow.show()
-
-
 
     if DEBUG:
         test_data_paths = (
