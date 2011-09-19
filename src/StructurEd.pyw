@@ -16,19 +16,26 @@ import rc
 
 
 class MainWindow(QMainWindow):
-    def __init__(self):
+    def __init__(self, fixed_data_filename=None, fixed_scheme_filename=None):
         super(MainWindow, self).__init__()
         self.save_filename = None
         self.globalMenuBar = QMenuBar()
-        actionLoadScheme = QAction(QIcon(":/icons/scheme-open.png"), "Load scheme file", self)
-        actionLoadScheme.triggered.connect(self.load_scheme)
-        actionSave = QAction(QIcon(":/icons/document-save.png"),"Save", self)
-        actionSave.triggered.connect(self.save_data)
-        actionOpen = QAction(QIcon(":/icons/document-open.png"), "Open", self)
-        actionOpen.triggered.connect(self.load_data)
-        actionSaveAs = QAction(QIcon(":/icons/document-save-as.png"),"Save as...", self)
-        actionSaveAs.triggered.connect(self.save_data_as)
-
+        if not fixed_scheme_filename:
+            actionLoadScheme = QAction(QIcon(":/icons/scheme-open.png"), "Load scheme file", self)
+            actionLoadScheme.triggered.connect(self.load_scheme)
+            self.__scheme = StructuredNode({})
+        else:
+            self.__load_scheme(fixed_scheme_filename)
+        if not fixed_data_filename:
+            actionSave = QAction(QIcon(":/icons/document-save.png"),"Save", self)
+            actionSave.triggered.connect(self.save_data)
+            actionOpen = QAction(QIcon(":/icons/document-open.png"), "Open", self)
+            actionOpen.triggered.connect(self.load_data)
+            actionSaveAs = QAction(QIcon(":/icons/document-save-as.png"),"Save as...", self)
+            actionSaveAs.triggered.connect(self.save_data_as)
+            self.__data = StructuredNode({})
+        else:
+            self.__load_data(fixed_data_filename)
 
         actionOpenRoot = QAction(QIcon(":/icons/window-new.png"), "Open root item", self)
         actionOpenRoot.triggered.connect(self._open_root)
@@ -44,12 +51,11 @@ class MainWindow(QMainWindow):
         self.setUnifiedTitleAndToolBarOnMac(True)
         self.toolbar.addActions((actionLoadScheme, actionOpen, actionSave, actionOpenRoot))
 
-        self.__data = StructuredNode({})
-        self.__scheme = StructuredNode({})
 
         self.scheme_tree_view = SchemeTreeWidget(self.__scheme)
         self.scheme_tree_view.load(self.__scheme)
         self.setCentralWidget(self.scheme_tree_view)
+        
 
     def _open_root(self):
         NodeWindow(self.__data, self.__scheme).show()
@@ -74,35 +80,36 @@ class MainWindow(QMainWindow):
 
 
     def load_data(self):
-        self.save_filename = unicode(QFileDialog.getOpenFileName(self, "Open File",
+        data_filename = unicode(QFileDialog.getOpenFileName(self, "Open File",
 #                            "sample_data.plist",
                             "Property Lists (*.plist)"))
-        if self.save_filename:
-            self.__load_data(StructuredNode(plistlib.readPlist(self.save_filename)))
+        if data_filename:
+            self.__load_data(data_filename)
 
 
     def load_scheme(self):
-        self.scheme_name = unicode(QFileDialog.getOpenFileName(self, "Open File",
+        scheme_filename = unicode(QFileDialog.getOpenFileName(self, "Open File",
 #                            "sample_data.plist",
                             "Property Lists (*.plist)"))
-        if self.scheme_name:
-            self.__load_scheme(StructuredNode(plistlib.readPlist(self.scheme_name)))
+        if scheme_filename:
+            self.__load_scheme(scheme_filename)
 
 
 
-    def __load_scheme(self, scheme):
-        self.__scheme = scheme
+    def __load_scheme(self, scheme_filename):
+        self.__scheme = StructuredNode(plistlib.readPlist(scheme_filename))
+        self.scheme_filename = scheme_filename
         self.scheme_tree_view.load(self.__scheme)
         self.adjustSize()
 
-    def __load_data(self, data):
-        self.__data = data
+    def __load_data(self, data_filename):
+        self.__data = StructuredNode(plistlib.readPlist(data_filename))
+        self.save_filename = data_filename
 
     def _load_data_and_scheme(self, data_filename, scheme_filename):
-        self.__load_scheme(StructuredNode(plistlib.readPlist(scheme_filename)))
-        self.scheme_name = scheme_filename
-        self.__load_data(StructuredNode(plistlib.readPlist(data_filename)))
-        self.save_filename = data_filename
+        self.__load_scheme(scheme_filename)
+        self.__load_data(data_filename)
+
 
 
 if __name__=="__main__":
