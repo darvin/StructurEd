@@ -9,17 +9,68 @@ Usage (Mac OS X):
 Usage (Windows):
      python setup.py py2exe
 """
+import distutils
 import glob
 import os
 
 import ez_setup
 ez_setup.use_setuptools()
 
+from subprocess import call
 
 from setuptools import setup
 import sys
 
 mainscript = 'src/StructurEd.pyw'
+
+from distutils.core import Command
+from distutils.command.build import build
+
+
+def needsupdate(src, targ):
+    return not os.path.exists(targ) or os.path.getmtime(src) > os.path.getmtime(targ)
+
+
+
+class BuildUiCommand(Command):
+    description = "build Python modules from qrc files"
+
+    user_options = []
+    def initialize_options(self):
+        pass
+
+    def finalize_options(self):
+        pass
+
+
+    def compile_qrc(self, qrc_file, py_file):
+        if not needsupdate(qrc_file, py_file):
+            return
+        print("compiling %s -> %s" % (qrc_file, py_file))
+        try:
+            import subprocess
+            rccprocess = subprocess.Popen(['pyrcc4', qrc_file, '-o', py_file])
+            rccprocess.wait()
+        except Exception, e:
+            raise distutils.errors.DistutilsExecError, 'Unable to compile resouce file %s' % str(e)
+            return
+    def run(self):
+        self.compile_qrc( 'resources/resources.qrc', 'src/rc.py' )
+
+class BuildCommand(build):
+    def is_win_platform(self):
+        return hasattr(self, "plat_name") and (self.plat_name[:3] == 'win')
+
+    sub_commands = [('build_ui', None)] + build.sub_commands
+    #+ [('build_winext', is_win_platform)]
+
+
+cmds = {
+        'build' : BuildCommand,
+        'build_ui' : BuildUiCommand,
+        }
+
+
 
 if sys.platform == 'darwin':
      extra_options = dict(
@@ -78,5 +129,7 @@ Topic :: Utilities
     package_dir = {'structured': 'src'},
     packages = ['structured'],
     scripts=[mainscript],
+     cmdclass = cmds,
     **extra_options
+
 )

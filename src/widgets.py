@@ -40,7 +40,7 @@ class NodeWidget(object):
             self.description = self.scheme["Description"].get()
 
     def _retain_data(self):
-        self.data.add_notify(self.load)
+        self.data.add_set_notify(self.load)
 
     def load(self):
         raise NotImplementedError

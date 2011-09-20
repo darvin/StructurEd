@@ -9,9 +9,9 @@ import plistlib
 DEBUG = True
 
 import sys
-from PyQt4 import QtGui
 from PyQt4.QtGui import *
 
+from PyQt4.QtCore import QSettings
 import rc
 
 
@@ -132,7 +132,7 @@ class MainWindow(QMainWindow):
 
 if __name__=="__main__":
 
-    app = QtGui.QApplication(sys.argv)
+    app = QApplication(sys.argv)
 
     app.setOrganizationName("SergeyKlimov")
     app.setOrganizationDomain("darvin.github.com")
