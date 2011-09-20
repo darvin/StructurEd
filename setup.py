@@ -55,7 +55,7 @@ class BuildUiCommand(Command):
             raise distutils.errors.DistutilsExecError, 'Unable to compile resouce file %s' % str(e)
             return
     def run(self):
-        self.compile_qrc( 'resources/resources.qrc', 'src/rc.py' )
+        self.compile_qrc( os.path.join('resources','resources.qrc'), os.path.join('src','rc.py') )
 
 class BuildCommand(build):
     def is_win_platform(self):
@@ -88,13 +88,23 @@ if sys.platform == 'darwin':
              )),
      )
 elif sys.platform == 'win32':
-     sys.path.append("C:\\Program Files\\Microsoft Visual Studio 9.0\\VC\\redist\\x86\\Microsoft.VC90.CRT")
+     import py2exe
+     msredist_path = r"C:\Python27\Microsoft.VC90.CRT"
+     sys.path.append(msredist_path)
+     sys.path.append(r"C:\Python27\Lib\site-packages\PyQt4")
+     print sys.path
+     msredist_files = [msredist_path+"\\Microsoft.VC90.CRT.manifest"]+glob.glob(msredist_path+"\\*.dll")
+     print msredist_files
      extra_options = dict(
          setup_requires=['py2exe'],
-         app=[mainscript],
+	 zipfile=None,
          windows=[{"script":mainscript, "icon_resources": [(1, "resources\\application_icon\\StructurEd.ico")]}],
-         py2exe= {"includes" : ["sip", "PyQt4._qt"]},
-         data_files=[("Microsoft.VC90.CRT", glob(r'C:\Program Files\Microsoft Visual Studio 9.0\VC\redist\x86\Microsoft.VC90.CRT\*.*'))]
+         options=dict(py2exe= {"includes" : ["sip", "PyQt4"],
+				"bundle_files":1,
+	 
+	 }
+	 ),
+         data_files=[("Microsoft.VC90.CRT", msredist_files)] 
      )
 else:
      extra_options = dict(
