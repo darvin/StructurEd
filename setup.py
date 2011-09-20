@@ -21,7 +21,7 @@ from subprocess import call
 from setuptools import setup
 import sys
 
-mainscript = 'src/StructurEd.pyw'
+mainscript = os.path.join('src','StructurEd.pyw')
 
 from distutils.core import Command
 from distutils.command.build import build
@@ -88,10 +88,13 @@ if sys.platform == 'darwin':
              )),
      )
 elif sys.platform == 'win32':
+     sys.path.append("C:\\Program Files\\Microsoft Visual Studio 9.0\\VC\\redist\\x86\\Microsoft.VC90.CRT")
      extra_options = dict(
          setup_requires=['py2exe'],
          app=[mainscript],
-         py2exe= {"includes" : ["sip", "PyQt4._qt"]}
+         windows=[{"script":mainscript, "icon_resources": [(1, "resources\\application_icon\\StructurEd.ico")]}],
+         py2exe= {"includes" : ["sip", "PyQt4._qt"]},
+         data_files=[("Microsoft.VC90.CRT", glob(r'C:\Program Files\Microsoft Visual Studio 9.0\VC\redist\x86\Microsoft.VC90.CRT\*.*'))]
      )
 else:
      extra_options = dict(
