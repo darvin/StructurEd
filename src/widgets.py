@@ -93,6 +93,27 @@ class StringWidget(QLineEdit, NodeWidget):
     @classmethod
     def _get_default_data(cls, scheme, data):
         return StringNode("")
+
+@NodeWidget.register
+class SubNodeWidget(QPushButton, NodeWidget):
+    data_type = "SubNode"
+    def __init__(self, name, data, scheme, parent=None):
+        QPushButton.__init__(self, "open", parent)
+        NodeWidget.__init__(self, name, data, scheme)
+        self.clicked.connect(self._open)
+    def load(self):
+        pass
+
+    def dump(self):
+        pass
+
+    def _open(self, path):
+        self.parent().open(Path(self.data.path()+("SubElements",)))
+
+    @classmethod
+    def _get_default_data(cls, scheme, data):
+        return StructuredNode({})
+
 @NodeWidget.register
 class FilenameWidget(QWidget, NodeWidget):
     data_type = "Filename"
@@ -458,4 +479,8 @@ class SelectObjectWidget(SelectWidget):
         
     @classmethod
     def _get_default_data(cls, scheme, data):
-        return cls._get_options_from_scheme(scheme, data)[0]
+        res = cls._get_options_from_scheme(scheme, data)
+        if not res:
+            return ArrayNode([])
+        else:
+            return res

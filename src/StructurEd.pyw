@@ -1,9 +1,12 @@
-from structured.main_window import MainWindow
+try:
+    from structured.main_window import MainWindow
+except ImportError:
+    from main_window import MainWindow
 from PyQt4.QtGui import *
 import os, sys
 
 
-DEBUG = True
+DEBUG = False
 if __name__=="__main__":
 
     app = QApplication(sys.argv)

@@ -68,7 +68,7 @@ class MainWindow(QMainWindow):
             self.__load_scheme(scheme_filename)
         data_filename = unicode(self.settings.value('recent_files/data').toString())
         if data_filename:
-            self.__load_scheme(data_filename)
+            self.__load_data(data_filename)
 
     def _write_settings(self):
         self.settings.setValue('recent_files/data', self.save_filename)
