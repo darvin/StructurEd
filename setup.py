@@ -91,6 +91,7 @@ elif sys.platform == 'win32':
      extra_options = dict(
          setup_requires=['py2exe'],
          app=[mainscript],
+         py2exe= {"includes" : ["sip", "PyQt4._qt"]}
      )
 else:
      extra_options = dict(
