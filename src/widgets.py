@@ -481,6 +481,6 @@ class SelectObjectWidget(SelectWidget):
     def _get_default_data(cls, scheme, data):
         res = cls._get_options_from_scheme(scheme, data)
         if not res:
-            return ArrayNode([])
+            return None
         else:
-            return res
+            return res[0]

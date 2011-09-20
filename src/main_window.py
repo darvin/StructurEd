@@ -60,7 +60,10 @@ class MainWindow(QMainWindow):
         self.scheme_tree_view.load(self.__scheme)
         self.setCentralWidget(self.scheme_tree_view)
 
-        self._read_settings()
+        try:
+            self._read_settings()
+        except IOError:
+            pass
 
     def _read_settings(self):
         scheme_filename = unicode(self.settings.value('recent_files/scheme').toString())
