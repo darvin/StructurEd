@@ -1,5 +1,5 @@
 from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QWidget, QHBoxLayout, QLabel, QVBoxLayout, QPushButton, QToolBar, QMainWindow, QToolButton, QMessageBox
+from PyQt4.QtGui import QWidget, QHBoxLayout, QLabel, QVBoxLayout, QPushButton, QToolBar, QMainWindow, QToolButton, QMessageBox, QStackedWidget
 from models import Path, StructuredNode
 from utils import layout_set_sm_and_mrg, StyledButton
 from widgets import StructuredWidget
@@ -80,6 +80,8 @@ class NodeWindow(QMainWindow):
 #        layout_set_sm_and_mrg(self.layout)
         self.cachedWidgets = {}
         self.currentStructuredWidget = None
+        self.stacked = QStackedWidget(self)
+        self.setCentralWidget(self.stacked)
 
         self.data, self.scheme = data, scheme
         self.openWidgetByPath(Path())
@@ -93,15 +95,15 @@ class NodeWindow(QMainWindow):
 
     def openWidgetByPath(self, path):
         if path in self.cachedWidgets:
-            if self.currentStructuredWidget:
-                self.currentStructuredWidget.hide()
+#            if self.currentStructuredWidget:
+#                self.currentStructuredWidget.hide()
             self.currentStructuredWidget = self.cachedWidgets[path]
-            self.currentStructuredWidget.show()
+            self.stacked.setCurrentWidget(self.currentStructuredWidget)
             self.pathWidget.setPath(path)
         else:
             if "Type" not in path.get(self.scheme): #fimxe soon
                 self.cachedWidgets[path] = StructuredWidget(unicode(path), path.get(self.data), path.get(self.scheme), self.openWidgetByPath, self)
-                self.setCentralWidget(self.cachedWidgets[path])
+                self.stacked.addWidget(self.cachedWidgets[path])
                 self.openWidgetByPath(path)
             else:
                 pass
