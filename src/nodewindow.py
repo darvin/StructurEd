@@ -132,7 +132,7 @@ class NodeWindow(QMainWindow):
 
     def finishClose(self, value):
         if value==QMessageBox.Yes:
-            self.reallyQuit = self.save()
+            self.reallyQuit = self.parent().save_data()
             if not self.reallyQuit:
                 return
         elif value==QMessageBox.No:
@@ -140,8 +140,3 @@ class NodeWindow(QMainWindow):
         elif value==QMessageBox.Cancel:
             return
         self.close()
-
-    def save(self):
-        x = self.parent().save_data()
-        print x
-        return x
