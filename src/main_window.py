@@ -1,3 +1,4 @@
+from PyQt4 import Qt
 import os
 from models import StructuredNode
 from nodewindow import NodeWindow
@@ -44,16 +45,15 @@ class MainWindow(QMainWindow):
             self.toolbar.addActions((actionOpen, ))
 
 
-        actionSave = QAction(QIcon(":/icons/document-save.png"),"Save", self)
+        self.actionSave = actionSave = QAction(QIcon(":/icons/document-save.png"),"Save", self)
         actionSave.triggered.connect(self.save_data)
-        actionSaveAs = QAction(QIcon(":/icons/document-save-as.png"),"Save as...", self)
+        self.actionSaveAs = actionSaveAs = QAction(QIcon(":/icons/document-save-as.png"),"Save as...", self)
         actionSaveAs.triggered.connect(self.save_data_as)
 
 #        actionOpenRoot = QAction(QIcon(":/icons/window-new.png"), "Open root item", self)
 #        actionOpenRoot.triggered.connect(self._open_root)
 
         menuFile.addActions((actionSave, actionSaveAs))
-        self.toolbar.addActions((actionSave, ))
 
 
 
@@ -65,6 +65,8 @@ class MainWindow(QMainWindow):
         self.scheme_tree_view = SchemeTreeWidget(self._scheme)
         self.scheme_tree_view.load(self._scheme)
         self.setCentralWidget(self.scheme_tree_view)
+
+        self.node_window = None
 
         try:
             self._read_settings(fixed_scheme_filename, fixed_data_filename)
@@ -85,19 +87,29 @@ class MainWindow(QMainWindow):
         self.settings.setValue('recent_files/scheme', self.scheme_filename)
 
     def _open_root(self):
-        NodeWindow(self._data, self._scheme).show()
+        if self.node_window:
+            self.node_window.close()
+        self.node_window = NodeWindow(self._data, self._scheme, parent=self)
+        self.node_window.show()
 
     def closeEvent(self, event):
         self._write_settings()
-        event.accept()
+        if self.dialogChanged():
+            event.accept()
+        else:
+            event.reject()
+
+    def dialogChanged(self):
+        return True
 
 
     def save_data(self):
         if self.save_filename:
             dump = self._data.dump()
             plistlib.writePlist(dump, unicode(self.save_filename))
+            return True
         else:
-            self.save_data_as()
+            return self.save_data_as()
 
     def save_data_as(self):
 
@@ -105,7 +117,7 @@ class MainWindow(QMainWindow):
                             "New Structured Property List.plist",
                             "Property Lists (*.plist)"))
         if self.save_filename:
-            self.save_data()
+            return self.save_data()
 
 
     def load_data(self):

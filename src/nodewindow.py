@@ -1,10 +1,11 @@
-from PyQt4.QtGui import QWidget, QHBoxLayout, QLabel, QVBoxLayout, QPushButton
+from PyQt4.QtCore import Qt
+from PyQt4.QtGui import QWidget, QHBoxLayout, QLabel, QVBoxLayout, QPushButton, QToolBar, QMainWindow, QToolButton, QMessageBox
 from models import Path, StructuredNode
 from utils import layout_set_sm_and_mrg, StyledButton
 from widgets import StructuredWidget
 
 
-class LabelPath(StyledButton):
+class LabelPath(QToolButton):
     style = """
 QPushButton {
     border: 1px solid #8B8B8B;
@@ -70,18 +71,25 @@ class PathWidget(QWidget):
         for j in range(len(path)+1, self.MAX_PATH_LENGTH):
             self._labels[j].hide()
 
-class NodeWindow(QWidget):
+class NodeWindow(QMainWindow):
     def __init__(self, data, scheme, parent=None):
         super(NodeWindow, self).__init__(parent)
         self.layout = QVBoxLayout(self)
         self.pathWidget = PathWidget(self.openWidgetByPath, data.path())
-        self.layout.addWidget(self.pathWidget)
-        layout_set_sm_and_mrg(self.layout)
+        self.statusBar().addWidget(self.pathWidget)
+#        layout_set_sm_and_mrg(self.layout)
         self.cachedWidgets = {}
         self.currentStructuredWidget = None
 
         self.data, self.scheme = data, scheme
         self.openWidgetByPath(Path())
+        self.toolbar = QToolBar()
+        self.toolbar.addActions((self.parent().actionSave,self.parent().actionSaveAs, ))
+        self.addToolBar(self.toolbar)
+        self.setUnifiedTitleAndToolBarOnMac(True)
+        self.messageBoxChanged = None
+        self.reallyQuit = False
+
 
     def openWidgetByPath(self, path):
         if path in self.cachedWidgets:
@@ -93,9 +101,45 @@ class NodeWindow(QWidget):
         else:
             if "Type" not in path.get(self.scheme): #fimxe soon
                 self.cachedWidgets[path] = StructuredWidget(unicode(path), path.get(self.data), path.get(self.scheme), self.openWidgetByPath, self)
-                self.layout.addWidget(self.cachedWidgets[path])
+                self.setCentralWidget(self.cachedWidgets[path])
                 self.openWidgetByPath(path)
             else:
                 pass
 
+    def closeEvent(self, event):
+        if self.reallyQuit:
+            event.accept()
+        else:
+            self.dialogChanged()
+            event.ignore()
 
+    def dialogChanged(self):
+        if not self.messageBoxChanged:
+            self.messageBoxChanged = QMessageBox("SDI",
+                "The document has been modified.\n"+
+                    "Do you want to save your changes?",
+                QMessageBox.Warning,
+                QMessageBox.Yes | QMessageBox.Default,
+                QMessageBox.No,
+                QMessageBox.Cancel | QMessageBox.Escape,
+                self
+            )
+            self.messageBoxChanged.setWindowModality (Qt.WindowModal )
+            self.messageBoxChanged.finished.connect(self.finishClose)
+        self.messageBoxChanged.show()
+
+    def finishClose(self, value):
+        if value==QMessageBox.Yes:
+            self.reallyQuit = self.save()
+            if not self.reallyQuit:
+                return
+        elif value==QMessageBox.No:
+            self.reallyQuit = True
+        elif value==QMessageBox.Cancel:
+            return
+        self.close()
+
+    def save(self):
+        x = self.parent().save_data()
+        print x
+        return x
