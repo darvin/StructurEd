@@ -21,55 +21,62 @@ class MainWindow(QMainWindow):
         self.settings = QSettings()
 
         self.save_filename = None
-	self.scheme_filename = None
+        self.scheme_filename = None
         self.globalMenuBar = QMenuBar()
+
+        menuFile = self.globalMenuBar.addMenu("File")
+        self.toolbar = QToolBar()
+
+        self._scheme = StructuredNode({})
+        self._data = StructuredNode({})
+
         if not fixed_scheme_filename:
             actionLoadScheme = QAction(QIcon(":/icons/scheme-open.png"), "Load scheme file", self)
             actionLoadScheme.triggered.connect(self.load_scheme)
-            self.__scheme = StructuredNode({})
-        else:
-            self.__load_scheme(fixed_scheme_filename)
+            menuFile.addActions((actionLoadScheme, ))
+            self.toolbar.addActions((actionLoadScheme, ))
+
+
         if not fixed_data_filename:
-            actionSave = QAction(QIcon(":/icons/document-save.png"),"Save", self)
-            actionSave.triggered.connect(self.save_data)
             actionOpen = QAction(QIcon(":/icons/document-open.png"), "Open", self)
             actionOpen.triggered.connect(self.load_data)
-            actionSaveAs = QAction(QIcon(":/icons/document-save-as.png"),"Save as...", self)
-            actionSaveAs.triggered.connect(self.save_data_as)
-            self.__data = StructuredNode({})
-
-        else:
-            self.__load_data(fixed_data_filename)
-
-        actionOpenRoot = QAction(QIcon(":/icons/window-new.png"), "Open root item", self)
-        actionOpenRoot.triggered.connect(self._open_root)
+            menuFile.addActions((actionOpen, ))
+            self.toolbar.addActions((actionOpen, ))
 
 
-        menuFile = self.globalMenuBar.addMenu("File")
-        menuFile.addActions((actionLoadScheme, actionOpen, actionSave, actionSaveAs))
+        actionSave = QAction(QIcon(":/icons/document-save.png"),"Save", self)
+        actionSave.triggered.connect(self.save_data)
+        actionSaveAs = QAction(QIcon(":/icons/document-save-as.png"),"Save as...", self)
+        actionSaveAs.triggered.connect(self.save_data_as)
+
+#        actionOpenRoot = QAction(QIcon(":/icons/window-new.png"), "Open root item", self)
+#        actionOpenRoot.triggered.connect(self._open_root)
+
+        menuFile.addActions((actionSave, actionSaveAs))
+        self.toolbar.addActions((actionSave, ))
 
 
 
-        self.toolbar = QToolBar()
+
         self.addToolBar(self.toolbar)
         self.setUnifiedTitleAndToolBarOnMac(True)
-        self.toolbar.addActions((actionLoadScheme, actionOpen, actionSave, actionOpenRoot))
 
 
-        self.scheme_tree_view = SchemeTreeWidget(self.__scheme)
-        self.scheme_tree_view.load(self.__scheme)
+        self.scheme_tree_view = SchemeTreeWidget(self._scheme)
+        self.scheme_tree_view.load(self._scheme)
         self.setCentralWidget(self.scheme_tree_view)
 
         try:
-            self._read_settings()
+            self._read_settings(fixed_scheme_filename, fixed_data_filename)
         except IOError:
             pass
 
-    def _read_settings(self):
-        scheme_filename = unicode(self.settings.value('recent_files/scheme').toString())
+
+    def _read_settings(self, fixed_scheme_filename=None, fixed_data_filename=None):
+        scheme_filename = fixed_scheme_filename or unicode(self.settings.value('recent_files/scheme').toString())
         if scheme_filename:
             self.__load_scheme(scheme_filename)
-        data_filename = unicode(self.settings.value('recent_files/data').toString())
+        data_filename = fixed_data_filename or unicode(self.settings.value('recent_files/data').toString())
         if data_filename:
             self.__load_data(data_filename)
 
@@ -78,7 +85,7 @@ class MainWindow(QMainWindow):
         self.settings.setValue('recent_files/scheme', self.scheme_filename)
 
     def _open_root(self):
-        NodeWindow(self.__data, self.__scheme).show()
+        NodeWindow(self._data, self._scheme).show()
 
     def closeEvent(self, event):
         self._write_settings()
@@ -87,7 +94,7 @@ class MainWindow(QMainWindow):
 
     def save_data(self):
         if self.save_filename:
-            dump = self.__data.dump()
+            dump = self._data.dump()
             plistlib.writePlist(dump, unicode(self.save_filename))
         else:
             self.save_data_as()
@@ -119,14 +126,15 @@ class MainWindow(QMainWindow):
 
 
     def __load_scheme(self, scheme_filename):
-        self.__scheme = StructuredNode(plistlib.readPlist(scheme_filename))
+        self._scheme = StructuredNode(plistlib.readPlist(scheme_filename))
         self.scheme_filename = scheme_filename
-        self.scheme_tree_view.load(self.__scheme)
+        self.scheme_tree_view.load(self._scheme)
         self.adjustSize()
 
     def __load_data(self, data_filename):
-        self.__data = StructuredNode(plistlib.readPlist(data_filename))
+        self._data = StructuredNode(plistlib.readPlist(data_filename))
         self.save_filename = data_filename
+        self._open_root()
 
     def _load_data_and_scheme(self, data_filename, scheme_filename):
         self.__load_scheme(scheme_filename)
