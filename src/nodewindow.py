@@ -1,25 +1,10 @@
 from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QWidget, QHBoxLayout, QLabel, QVBoxLayout, QPushButton, QToolBar, QMainWindow, QToolButton, QMessageBox, QStackedWidget
+from PyQt4.QtGui import QToolBar, QMainWindow, QToolButton, QMessageBox, QStackedWidget, QStatusBar
 from models import Path, StructuredNode
-from utils import layout_set_sm_and_mrg, StyledButton
 from widgets import StructuredWidget
 
 
 class LabelPath(QToolButton):
-    style = """
-QPushButton {
-    border: 1px solid #8B8B8B;
-    border-radius: 0.4px;
-    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                                   stop: 0 #F6F6F6, stop: 1 #DBDBDA);
-    min-width: 35px;
-    min-height: 20px;
-}
-QPushButton:pressed {
-    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                                   stop: 0 #dadbde, stop: 1 #f6f7fa);
-}
-        """
 
     def __init__(self, open_func, parent=None):
         super(LabelPath, self).__init__(parent)
@@ -39,17 +24,11 @@ QPushButton:pressed {
         self.open_func(self.path)
 
 
-class PathWidget(QWidget):
+class PathWidget(QStatusBar):
 
     MAX_PATH_LENGTH = 30 #fixme
     def __init__(self, open_func, path=None, parent=None):
         super(PathWidget, self).__init__(parent)
-        mainlayout = QHBoxLayout(self)
-        self.layout = QHBoxLayout()
-        mainlayout.addLayout(self.layout)
-        mainlayout.addStretch(1)
-        self.layout.setMargin(0)
-#        self.layout.setSpacing(4)
         if not path:
             path = Path(())
 
@@ -58,7 +37,7 @@ class PathWidget(QWidget):
         for i in range(self.MAX_PATH_LENGTH):
             nameLabel = LabelPath(open_func, self)
             self._labels.append(nameLabel)
-            self.layout.addWidget(nameLabel)
+            self.addWidget(nameLabel)
             nameLabel.hide()
 
         self.setPath(path)
@@ -74,9 +53,8 @@ class PathWidget(QWidget):
 class NodeWindow(QMainWindow):
     def __init__(self, data, scheme, parent=None):
         super(NodeWindow, self).__init__(parent)
-        self.layout = QVBoxLayout(self)
         self.pathWidget = PathWidget(self.openWidgetByPath, data.path())
-        self.statusBar().addWidget(self.pathWidget)
+        self.setStatusBar(self.pathWidget)
 #        layout_set_sm_and_mrg(self.layout)
         self.cachedWidgets = {}
         self.currentStructuredWidget = None

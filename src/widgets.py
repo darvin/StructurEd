@@ -2,7 +2,7 @@ import os
 from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QLineEdit, QSpinBox, QWidget, QVBoxLayout, QListWidget, QPushButton, QHBoxLayout, QListWidgetItem, QGridLayout, QLabel, QAbstractItemView, QComboBox, QIntValidator, QDoubleValidator, QCheckBox, QFileDialog, QImage, QPixmap
 from models import StructuredNode, StringNode, IntegerNode, RealNode, BooleanNode, ArrayNode, Path, Node
-from utils import get_or_create_dict_element, layout_set_sm_and_mrg, StyledButton
+from utils import get_or_create_dict_element, layout_set_sm_and_mrg, StyledButton, PlusMinusWidget
 
 
 class SmallSquareButton(StyledButton):
@@ -259,15 +259,9 @@ class ArrayWidget(QWidget, NodeWidget):
         self.layout.addWidget(self._listwidget)
         hlayout = QHBoxLayout()
         self.layout.addLayout(hlayout)
-        self._add_button = SmallSquareButton("+", self)
-        hlayout.addWidget(self._add_button)
-        self._add_button.clicked.connect(self.add_item)
 
-
-        self._delete_button = SmallSquareButton("-", self)
-        hlayout.addWidget(self._delete_button)
-        self._delete_button.clicked.connect(self.delete_item)
-
+        self._plus_minus_widget = PlusMinusWidget(self.create_item, self.delete_item, self)
+        hlayout.addWidget(self._plus_minus_widget)
 
 
         self.element_scheme = self.scheme["ElementScheme"]
@@ -374,19 +368,15 @@ class StructuredDictionaryWidget(QWidget, NodeWidget):
         self.layout.setMargin(0)
         self.layout.setContentsMargins(0,0,0,0)
         self.layout.addLayout(hlayout)
-        self._add_button = SmallSquareButton("+", self)
-        hlayout.addWidget(self._add_button)
-        self._add_button.clicked.connect(self.create_item)
 
+        self._plus_minus_widget = PlusMinusWidget(self.create_item, self.delete_item, self)
+        hlayout.addWidget(self._plus_minus_widget)
 
 #        self._edit_button = SmallSquareButton("edit", self)
 #        hlayout.addWidget(self._edit_button)
 #        self._edit_button.clicked.connect(self.edit_item)
         self._listwidget.itemDoubleClicked.connect(self.edit_item)
 
-        self._delete_button = SmallSquareButton("-", self)
-        hlayout.addWidget(self._delete_button)
-        self._delete_button.clicked.connect(self.delete_item)
 
         hlayout.addStretch(1)
 
