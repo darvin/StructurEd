@@ -3,7 +3,7 @@ import os
 from models import StructuredNode
 from nodewindow import NodeWindow
 from schemetree import SchemeTreeWidget
-from src.utils import merge_dictionary
+from utils import merge_dictionary
 
 __author__ = 'darvin'
 import plistlib
