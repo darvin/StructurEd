@@ -279,7 +279,7 @@ class ArrayWidget(QWidget, NodeWidget):
         del new_data[row]
         self.data.set(tuple(new_data))
 
-    def add_item(self):
+    def create_item(self):
         self.data.set(list(self.data.get())+[Node.create_node(self.new_data.get()),])
 
     def __createItem(self, itemname):

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Objects1</key>
+	<dict>
+		<key>Object first type #1</key>
+		<dict>
+			<key>Some array of ints</key>
+			<array>
+				<integer>0</integer>
+				<integer>33</integer>
+			</array>
+			<key>Some array of objects with select</key>
+			<array>
+				<string>object second type #1</string>
+			</array>
+			<key>Some array of strings</key>
+			<array>
+				<string>string 1</string>
+				<string>dweqweqw</string>
+				<string>dweqwesqw</string>
+				<string>string last</string>
+			</array>
+			<key>Some array of strings with select</key>
+			<array>
+				<string>str2</string>
+				<string>str3</string>
+				<string>str1</string>
+				<string>str2</string>
+				<string>str1</string>
+				<string>str1</string>
+				<string>str1</string>
+				<string>str1</string>
+			</array>
+			<key>Some boolean</key>
+			<true/>
+			<key>Some integer</key>
+			<integer>11111111</integer>
+			<key>Some number</key>
+			<integer>23</integer>
+			<key>Some real</key>
+			<real>300234.0</real>
+			<key>Some select from strings</key>
+			<string>str2</string>
+			<key>Some string</key>
+			<string>asdfdsf</string>
+		</dict>
+	</dict>
+</dict>
+</plist>

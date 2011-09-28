@@ -3,6 +3,7 @@ import os
 from models import StructuredNode
 from nodewindow import NodeWindow
 from schemetree import SchemeTreeWidget
+from src.utils import merge_dictionary
 
 __author__ = 'darvin'
 import plistlib
@@ -50,11 +51,15 @@ class MainWindow(QMainWindow):
         self.actionSaveAs = actionSaveAs = QAction(QIcon(":/icons/document-save-as.png"),"Save as...", self)
         actionSaveAs.triggered.connect(self.save_data_as)
 
+        self.actionMerge = QAction("Merge", self)
+        self.actionMerge.triggered.connect(self.merge_data)
+
+
 #        actionOpenRoot = QAction(QIcon(":/icons/window-new.png"), "Open root item", self)
 #        actionOpenRoot.triggered.connect(self._open_root)
 
-        menuFile.addActions((actionSave, actionSaveAs))
-
+        menuFile.addActions((actionSave, actionSaveAs, self.actionMerge))
+        self.toolbar.addActions((self.actionMerge,))
 
 
 
@@ -135,6 +140,14 @@ class MainWindow(QMainWindow):
         if scheme_filename:
             self.__load_scheme(scheme_filename)
 
+
+    def merge_data(self):
+        add_data_filename = unicode(QFileDialog.getOpenFileName(self, "Open File",
+#                            "sample_data.plist",
+                            "Property Lists (*.plist)"))
+
+        self._data = StructuredNode(merge_dictionary(self._data.dump(), plistlib.readPlist(add_data_filename)))
+        self._open_root()
 
 
     def __load_scheme(self, scheme_filename):

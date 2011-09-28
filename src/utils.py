@@ -49,3 +49,19 @@ QToolButton:pressed {
         self._minus_button.clicked.connect(minus_callback)
         self.addWidget(self._plus_button)
         self.addWidget(self._minus_button)
+
+
+
+def merge_dictionary(dst, src):
+    stack = [(dst, src)]
+    while stack:
+        current_dst, current_src = stack.pop()
+        for key in current_src:
+            if key not in current_dst:
+                current_dst[key] = current_src[key]
+            else:
+                if isinstance(current_src[key], dict) and isinstance(current_dst[key], dict) :
+                    stack.append((current_dst[key], current_src[key]))
+                else:
+                    current_dst[key] = current_src[key]
+    return dst
