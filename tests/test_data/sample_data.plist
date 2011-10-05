@@ -49,6 +49,9 @@
 			<string>str2</string>
 			<key>Some string</key>
 			<string>12123123</string>
+			<key>Some unsorted dict</key>
+			<dict>
+			</dict>
 		</dict>
 		<key>Object first type #2</key>
 		<dict>

@@ -1,5 +1,6 @@
 from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QToolBar, QMainWindow, QToolButton, QMessageBox, QStackedWidget, QStatusBar
+import os
 from models import Path, StructuredNode
 from widgets import StructuredWidget
 
@@ -62,6 +63,7 @@ class NodeWindow(QMainWindow):
         self.setCentralWidget(self.stacked)
 
         self.data, self.scheme = data, scheme
+        self.data.add_set_notify(self.change_caption)
         self.openWidgetByPath(Path())
         self.toolbar = QToolBar()
         self.toolbar.addActions((self.parent().actionSave,self.parent().actionSaveAs, ))
@@ -69,6 +71,16 @@ class NodeWindow(QMainWindow):
         self.setUnifiedTitleAndToolBarOnMac(True)
         self.messageBoxChanged = None
         self.reallyQuit = False
+        self.change_caption()
+
+    def change_caption(self):
+        changed = ""
+        if self.data.changed:
+            changed = "* "
+        self.setWindowTitle("{} {}".format(changed, self.get_window_caption()))
+
+    def get_window_caption(self):
+        return os.path.basename(self.parent().save_filename)
 
 
     def openWidgetByPath(self, path):
@@ -87,7 +99,7 @@ class NodeWindow(QMainWindow):
                 pass
 
     def closeEvent(self, event):
-        if self.reallyQuit:
+        if self.reallyQuit or not self.data.changed:
             event.accept()
         else:
             self.dialogChanged()

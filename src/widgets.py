@@ -156,7 +156,6 @@ class FilenameWidget(QWidget, NodeWidget):
         self._browse_button = SmallSquareButton("...",self)
         self._browse_button.clicked.connect(self.browse)
         self._text = QLineEdit(self)
-        self._text.textChanged.connect(self.dump)
         self.layout.addWidget(self._text)
         self.layout.addWidget(self._browse_button)
         self.file_name = unicode(self.data.get())
@@ -171,6 +170,8 @@ class FilenameWidget(QWidget, NodeWidget):
 
     def load(self):
         self._text.setText(unicode(self.data.get()))
+        self._text.textChanged.connect(self.dump)
+
 
     def dump(self):
         self.data.set(unicode(self._text.text()),not_notify=self.load)
@@ -253,9 +254,10 @@ class BooleanWidget(QCheckBox, NodeWidget):
     def __init__(self, name, data, scheme, parent=None):
         QCheckBox.__init__(self, parent)
         NodeWidget.__init__(self, name, data, scheme)
-        self.stateChanged.connect(self.dump)
+
     def load(self):
         self.setChecked(self.data.get())
+        self.stateChanged.connect(self.dump)
 
     def dump(self):
         self.data.set(self.isChecked(), not_notify=self.load)

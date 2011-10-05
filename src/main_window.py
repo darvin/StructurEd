@@ -77,6 +77,18 @@ class MainWindow(QMainWindow):
         except IOError:
             pass
 
+        self.change_caption()
+
+    def change_caption(self):
+        changed = ""
+        if self._scheme.changed:
+            changed = "* "
+        self.setWindowTitle("{} {}".format(changed, self.get_window_caption()))
+
+    def get_window_caption(self):
+        return os.path.basename(self.scheme_filename)
+
+
 
     def _read_settings(self, fixed_scheme_filename=None, fixed_data_filename=None):
         scheme_filename = fixed_scheme_filename or unicode(self.settings.value('recent_files/scheme').toString())

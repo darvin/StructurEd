@@ -32,7 +32,9 @@ class Path(tuple):
 class Node(object):
     __node_classes = {}
     def __init__(self, value, name=None, parent=None):
-        self._value = value
+        self.changed = False
+        self.initialized =False
+        self.can_be_initalized = True
         self.__notify_at_set = []
         if not parent:
             self.name = "root"
@@ -41,6 +43,7 @@ class Node(object):
                 raise NotImplementedError
             self.name = name
         self.parent = parent
+        self.set(value)
 
     def add_set_notify(self, func):
         self.__notify_at_set.append(func)
@@ -76,8 +79,13 @@ class Node(object):
         return self.get()
 
     def _notify_set(self, not_notify=None):
-        if self.parent:
-            self.parent._notify_set(not_notify)
+        if self.initialized:
+            self.changed = True
+
+            if self.parent:
+                self.parent._notify_set(not_notify)
+        elif self.can_be_initalized:
+            self.initialized=True
         for func in self.__notify_at_set:
             if func!=not_notify:
                 func()
@@ -85,6 +93,7 @@ class Node(object):
     def set(self, value, not_notify=None):
         self._value = value
         self._notify_set(not_notify)
+
 
     def delete_from_parent(self):
         del self.parent[self.name]
@@ -176,8 +185,12 @@ class StructuredNode(AbstractCollectionNode):
 
 
     def _process_subnodes(self, value):
+        self.can_be_initalized = False
+        self.initialized = False
         for key, v in value.items():
             self[key] = Node.create_node(v)
+        self.can_be_initalized = True
+        self.initialized = True
 
 
 
