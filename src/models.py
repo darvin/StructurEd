@@ -75,14 +75,19 @@ class Node(object):
     def dump(self):
         return self.get()
 
-    def _notify_set(self, not_notify):
+    def _notify_set(self, not_notify=None):
+        if self.parent:
+            self.parent._notify_set(not_notify)
         for func in self.__notify_at_set:
             if func!=not_notify:
                 func()
 
     def set(self, value, not_notify=None):
-        self._notify_set(not_notify)
         self._value = value
+        self._notify_set(not_notify)
+
+    def delete_from_parent(self):
+        del self.parent[self.name]
 
     def path(self):
         if not self.parent:
@@ -189,11 +194,13 @@ class StructuredNode(AbstractCollectionNode):
         value.parent = self
         if key not in self._value:
             self._value[key] = value
+            self._notify_set()
         else:
             raise NotImplementedError
 
     def __delitem__(self, key):
         del self._value[key]
+        self._notify_set()
 
     def rename_item(self, old_name, new_name):
         if new_name in self._value:

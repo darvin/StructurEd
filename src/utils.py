@@ -1,4 +1,5 @@
 from PyQt4.QtGui import QPushButton, QToolBar, QToolButton
+import random
 
 def get_or_create_dict_element(dictionary, key, default_value):
     if key in dictionary:
@@ -65,3 +66,7 @@ def merge_dictionary(dst, src):
                 else:
                     current_dst[key] = current_src[key]
     return dst
+
+
+def random_str(st):
+    return "{} {}".format(st, random.randint(1,100))

@@ -2,7 +2,7 @@ from PyQt4 import Qt
 import os
 from models import StructuredNode
 from nodewindow import NodeWindow
-from schemetree import SchemeTreeWidget
+from schemetree import SchemeTreeWidget, SchemeTreeEditorWidget
 from utils import merge_dictionary
 
 __author__ = 'darvin'
@@ -67,7 +67,7 @@ class MainWindow(QMainWindow):
         self.setUnifiedTitleAndToolBarOnMac(True)
 
 
-        self.scheme_tree_view = SchemeTreeWidget(self._scheme)
+        self.scheme_tree_view = SchemeTreeEditorWidget(self._scheme)
         self.setCentralWidget(self.scheme_tree_view)
 
         self.node_window = None

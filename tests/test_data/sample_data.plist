@@ -58,6 +58,8 @@
 				<integer>4</integer>
 				<integer>5</integer>
 				<integer>75</integer>
+				<integer>32</integer>
+				<integer>32234</integer>
 			</array>
 			<key>Some array of objects with select</key>
 			<array>
@@ -69,6 +71,7 @@
 				<string>string 1</string>
 				<string>string 2</string>
 				<string>string 3</string>
+				<string>фывафыва</string>
 			</array>
 			<key>Some array of strings with select</key>
 			<array>
@@ -87,6 +90,11 @@
 			<string>str1</string>
 			<key>Some string</key>
 			<string>some string</string>
+			<key>Some unsorted dict</key>
+			<dict>
+				<key>фывафыва</key>
+				<string>фывафывавв</string>
+			</dict>
 		</dict>
 	</dict>
 	<key>Objects2</key>

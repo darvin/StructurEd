@@ -1,8 +1,11 @@
 import os
 from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QLineEdit, QSpinBox, QWidget, QVBoxLayout, QListWidget, QPushButton, QHBoxLayout, QListWidgetItem, QGridLayout, QLabel, QAbstractItemView, QComboBox, QIntValidator, QDoubleValidator, QCheckBox, QFileDialog, QImage, QPixmap
+from PyQt4.QtGui import QLineEdit, QSpinBox, QWidget, QVBoxLayout, \
+    QListWidget, QPushButton, QHBoxLayout, QListWidgetItem, QGridLayout, \
+    QLabel, QAbstractItemView, QComboBox, QIntValidator, QDoubleValidator, \
+    QCheckBox, QFileDialog, QImage, QPixmap, QTreeWidget, QTreeWidgetItem
 from models import StructuredNode, StringNode, IntegerNode, RealNode, BooleanNode, ArrayNode, Path, Node
-from utils import get_or_create_dict_element, layout_set_sm_and_mrg, StyledButton, PlusMinusWidget
+from utils import get_or_create_dict_element, layout_set_sm_and_mrg, StyledButton, PlusMinusWidget, random_str
 
 
 class SmallSquareButton(StyledButton):
@@ -27,7 +30,8 @@ QPushButton:pressed {
 class NodeWidget(object):
     two_rows = False
     data_type = "NoSuchType"
-
+    simple_widget = False
+    description = ""
     __node_widgets_classes = {}
     def __init__(self, name, data, scheme):
 
@@ -38,6 +42,8 @@ class NodeWidget(object):
         self.description =  name
         if "Description" in self.scheme:
             self.description = self.scheme["Description"].get()
+
+
 
     def _retain_data(self):
         self.data.add_set_notify(self.load)
@@ -50,10 +56,6 @@ class NodeWidget(object):
 #
 #    def get_scheme(self):
 #        return self.data.path().get(self.scheme)
-
-
-
-
 
     @classmethod
     def register(cls, widget_class): 
@@ -73,13 +75,22 @@ class NodeWidget(object):
         return new_data
 
     @classmethod
-    def _get_default_data(self, scheme, data):
+    def get_simple_widgets(cls):
+        return [value for key, value in cls.__node_widgets_classes.iteritems() if value.simple_widget]
+
+    @classmethod
+    def _get_default_data(cls, scheme, data):
         raise NotImplementedError
+
+    @classmethod
+    def get_description(cls):
+        return cls.description or cls.__name__
 
 
 @NodeWidget.register
 class StringWidget(QLineEdit, NodeWidget):
     data_type = "String"
+    simple_widget = True
     def __init__(self, name, data, scheme, parent=None):
         QLineEdit.__init__(self, parent)
         NodeWidget.__init__(self, name, data, scheme)
@@ -94,6 +105,7 @@ class StringWidget(QLineEdit, NodeWidget):
     @classmethod
     def _get_default_data(cls, scheme, data):
         return StringNode("")
+
 
 @NodeWidget.register
 class SubNodeWidget(QPushButton, NodeWidget):
@@ -115,9 +127,11 @@ class SubNodeWidget(QPushButton, NodeWidget):
     def _get_default_data(cls, scheme, data):
         return StructuredNode({})
 
+
 @NodeWidget.register
 class FilenameWidget(QWidget, NodeWidget):
     data_type = "Filename"
+    simple_widget = True
     def __init__(self, name, data, scheme, parent=None):
         QWidget.__init__(self, parent)
         NodeWidget.__init__(self, name, data, scheme)
@@ -159,7 +173,7 @@ class FilenameWidget(QWidget, NodeWidget):
         self._text.setText(unicode(self.data.get()))
 
     def dump(self):
-        self.data.set(unicode(self._text.text()))
+        self.data.set(unicode(self._text.text()),not_notify=self.load)
 
     def browse(self):
         self.file_name = file_name = unicode(QFileDialog.getOpenFileName(self, "Select file", filter=self.filename_mask))
@@ -176,7 +190,7 @@ class FilenameWidget(QWidget, NodeWidget):
 @NodeWidget.register
 class FilenameImageWidget(FilenameWidget):
     data_type = "FilenameImage"
-
+    simple_widget = True
     def __init__(self, name, data, scheme, parent=None):
         super(FilenameImageWidget, self).__init__(name, data, scheme, parent)
         self._viewer = QLabel(self)
@@ -191,10 +205,11 @@ class FilenameImageWidget(FilenameWidget):
             img = QPixmap(":/icons/does-not-exist.png")
         self._viewer.setPixmap(img)
 
+
 @NodeWidget.register
 class IntegerWidget(StringWidget):
     data_type = "Integer"
-
+    simple_widget = True
     def __init__(self, name, data, scheme, parent=None):
         super(IntegerWidget, self).__init__(name, data, scheme, parent)
         validator = QIntValidator(self)
@@ -204,15 +219,17 @@ class IntegerWidget(StringWidget):
         self.setText(unicode(self.data.get()))
 
     def dump(self):
-        self.data.set(int(self.text()))
+        self.data.set(int(self.text()), not_notify=self.load)
 
     @classmethod
     def _get_default_data(cls, scheme, data):
         return IntegerNode(0)
 
+
 @NodeWidget.register
 class RealWidget(StringWidget):
     data_type = "Real"
+    simple_widget = True
     def __init__(self, name, data, scheme, parent=None):
         super(RealWidget, self).__init__(name, data, scheme, parent)
         validator = QDoubleValidator(self)
@@ -222,7 +239,7 @@ class RealWidget(StringWidget):
         self.setText(unicode(self.data.get()))
 
     def dump(self):
-        self.data.set(float(self.text()))
+        self.data.set(float(self.text()), not_notify=self.load)
 
     @classmethod
     def _get_default_data(cls, scheme, data):
@@ -232,6 +249,7 @@ class RealWidget(StringWidget):
 @NodeWidget.register
 class BooleanWidget(QCheckBox, NodeWidget):
     data_type = "Boolean"
+    simple_widget = True
     def __init__(self, name, data, scheme, parent=None):
         QCheckBox.__init__(self, parent)
         NodeWidget.__init__(self, name, data, scheme)
@@ -240,11 +258,12 @@ class BooleanWidget(QCheckBox, NodeWidget):
         self.setChecked(self.data.get())
 
     def dump(self):
-        self.data.set(self.isChecked())
+        self.data.set(self.isChecked(), not_notify=self.load)
 
     @classmethod
     def _get_default_data(cls, scheme, data):
         return BooleanNode(False)
+
 
 @NodeWidget.register
 class ArrayWidget(QWidget, NodeWidget):
@@ -288,10 +307,6 @@ class ArrayWidget(QWidget, NodeWidget):
 #        item.setFlags (Qt.ItemIsSelectable | Qt.ItemIsEditable | Qt.ItemIsEnabled )
         self._listwidget.addItem(item)
 
-
-
-
-
     def dump(self):
         pass
 
@@ -304,6 +319,7 @@ class ArrayWidget(QWidget, NodeWidget):
     @classmethod
     def _get_default_data(cls, scheme, data):
         return ArrayNode([])
+
 
 @NodeWidget.register
 class StructuredWidget(QWidget, NodeWidget):
@@ -350,7 +366,6 @@ class StructuredWidget(QWidget, NodeWidget):
     @classmethod
     def _get_default_data(cls, scheme, data):
         return StructuredNode({})
-
 
 
 @NodeWidget.register
@@ -409,7 +424,10 @@ class StructuredDictionaryWidget(QWidget, NodeWidget):
     def rename_item(self, item):
         self.data.rename_item(self.current_item_index, unicode(item.text()))
     def current_item_changed(self, item):
-        self.current_item_index = unicode(item.text())
+        if item:
+            self.current_item_index = unicode(item.text())
+        else:
+            self.current_item_index = None
 
 
 
@@ -417,7 +435,9 @@ class StructuredDictionaryWidget(QWidget, NodeWidget):
     def dump(self):
         pass
 
+
     def load(self):
+        self._listwidget.clear()
         for key in self.data.keys():
             self.__createItem(key)
 
@@ -475,3 +495,104 @@ class SelectObjectWidget(SelectWidget):
             return None
         else:
             return res[0]
+
+#
+#
+#class SchemeNodeWidget(QWidget):
+#    def __init__(self, data, parent=None):
+
+
+
+class WidgetSelector(QWidget):
+    def __init__(self, parent):
+        QWidget.__init__(self, parent)
+        self.key_text = QLineEdit(self)
+        self.widget_select = QComboBox(self)
+        self.value_widget = None
+        self.layout = QHBoxLayout(self)
+        self.layout.addWidget(self.key_text)
+        self.layout.addWidget(self.widget_select)
+
+        self.options = NodeWidget.get_simple_widgets()
+        for i, option in enumerate(self.options):
+            self.widget_select.addItem(option.get_description(), i)
+
+        self.widget_select.currentIndexChanged.connect(self.change_widget)
+
+
+    def get_item(self):
+        return {
+            "key":unicode(self.key_text.text()),
+            "value":self.value_widget.data
+        }
+
+    def change_widget(self):
+
+        w_class = self.options[self.widget_select.currentIndex()]
+        if self.value_widget:
+            self.layout.removeWidget(self.value_widget)
+            self.value_widget.setParent(None)
+            self.value_widget = None
+
+        element_scheme = StructuredNode({"Type":w_class.data_type})
+        new_data = NodeWidget.get_default_data(element_scheme, None)
+        self.value_widget = NodeWidget.create_node_widget("__not_exist", new_data, element_scheme)
+        self.layout.addWidget(self.value_widget)
+
+@NodeWidget.register
+class DictWidget(QWidget, NodeWidget):
+    data_type = "Dict"
+    two_rows = True
+    def __init__(self, name, data, scheme, parent=None):
+        QWidget.__init__(self, parent)
+        NodeWidget.__init__(self, name, data, scheme)
+        self.layout = QVBoxLayout(self)
+        self.layout.setMargin(0)
+        self.layout.setContentsMargins(0,0,0,0)
+        self._listwidget = QTreeWidget(self)
+        self._listwidget.setColumnCount(2)
+        self._listwidget.setHeaderLabels(("Key","Value"))
+        self.layout.addWidget(self._listwidget)
+        hlayout = QHBoxLayout()
+        self.layout.addLayout(hlayout)
+
+        self._plus_minus_widget = PlusMinusWidget(self.create_item, self.delete_item, self)
+        hlayout.addWidget(self._plus_minus_widget)
+
+
+        self.new_data = None
+        hlayout.addStretch(1)
+        self.add_widget =  WidgetSelector(self)
+        hlayout.addWidget(self.add_widget)
+
+    def delete_item(self):
+        current_item = self._listwidget.currentItem()
+        if current_item:
+            key = current_item.data(1)
+            new_data = self.data.get()
+            del new_data[key]
+            self.data.set(new_data)
+
+    def create_item(self):
+        new_data = self.data.get()
+        new_item = self.add_widget.get_item()
+        new_data[new_item["key"]] = Node.create_node(new_item["value"].get())
+        self.data.set(new_data)
+
+    def __createItem(self, itemname, itemvalue):
+        item = QTreeWidgetItem(self._listwidget, [unicode(itemname), unicode(itemvalue)])
+#        item.setFlags (Qt.ItemIsSelectable | Qt.ItemIsEditable | Qt.ItemIsEnabled )
+
+
+    def dump(self):
+        pass
+
+    def load(self):
+        self._listwidget.clear()
+        for key, value in self.data.iteritems():
+            self.__createItem(key, value)
+
+
+    @classmethod
+    def _get_default_data(cls, scheme, data):
+        return StructuredNode({})

@@ -21,6 +21,13 @@
 				<key>Description</key>
 				<string>You can select string from list</string>
 			</dict>
+			<key>Some unsorted dict</key>
+			<dict>
+				<key>Type</key>
+				<string>Dict</string>
+				<key>Description</key>
+				<string>You can input any value</string>
+			</dict>
 			<key>Some integer</key>
 			<dict>
 				<key>Description</key>
