@@ -9,7 +9,7 @@ class TestSequenceFunctions(unittest.TestCase):
         child2 = StructuredNode({})
         self.root["child1"] = child1
         self.root["child2"]= child2
-        int1 = NumberNode(3, "int1", child1)
+        int1 = IntegerNode(3, "int1", child1)
         child1["int1"]=int1
         self.subchild1 = StructuredNode({})
         child2["subchild"] = self.subchild1
