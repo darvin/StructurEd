@@ -141,13 +141,17 @@ class MainWindow(QMainWindow):
             self.__load_scheme(scheme_filename)
 
 
+
     def merge_data(self):
         add_data_filename = unicode(QFileDialog.getOpenFileName(self, "Open File",
 #                            "sample_data.plist",
                             "Property Lists (*.plist)"))
+        self._merge_data(plistlib.readPlist(add_data_filename))
 
-        self._data = StructuredNode(merge_dictionary(self._data.dump(), plistlib.readPlist(add_data_filename)))
+    def _merge_data(self, data_dict):
+        self._data = StructuredNode(merge_dictionary(self._data.dump(), data_dict))
         self._open_root()
+
 
 
     def __load_scheme(self, scheme_filename):
