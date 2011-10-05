@@ -68,7 +68,6 @@ class MainWindow(QMainWindow):
 
 
         self.scheme_tree_view = SchemeTreeWidget(self._scheme)
-        self.scheme_tree_view.load(self._scheme)
         self.setCentralWidget(self.scheme_tree_view)
 
         self.node_window = None

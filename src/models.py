@@ -75,12 +75,13 @@ class Node(object):
     def dump(self):
         return self.get()
 
-    def _notify_set(self):
+    def _notify_set(self, not_notify):
         for func in self.__notify_at_set:
-            func()
+            if func!=not_notify:
+                func()
 
-    def set(self, value):
-        self._notify_set()
+    def set(self, value, not_notify=None):
+        self._notify_set(not_notify)
         self._value = value
 
     def path(self):
@@ -110,9 +111,9 @@ class TypedNode(Node):
         if not isinstance(value, self.types):
             raise NotImplementedError
 
-    def set(self, value):
+    def set(self, value, not_notify=None):
         self._check_type(value)
-        super(TypedNode, self).set(value)
+        super(TypedNode, self).set(value, not_notify)
 
 @Node.register
 class StringNode(TypedNode):

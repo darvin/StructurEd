@@ -11,11 +11,14 @@ class SchemeTreeWidget(QTreeWidget):
     __icons_cache = {}
     def __init__(self, scheme, parent=None):
         super(SchemeTreeWidget, self).__init__(parent)
-        self.scheme = scheme
+        self.load(scheme)
         self.setColumnCount(3)
 #        self.header().hide()
         self.setHeaderLabels(("Name", "Type", "Description"))
         self.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
+
+    def set_scheme(self, scheme):
+        self.scheme = scheme
 
     def sizeHint(self):
         s = self.size()
@@ -44,7 +47,14 @@ class SchemeTreeWidget(QTreeWidget):
                 item = self._create_item_from_node(n, parent_item)
                 self.__load(n, item)
 
+    def clean(self):
+
+        while self.topLevelItemCount():
+            self.takeTopLevelItem(0)
+
+
     def load(self, scheme):
+        self.clean()
         self.scheme = scheme
         self.__load(self.scheme, self)
         self.resizeColumnToContents(0)

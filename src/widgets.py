@@ -85,10 +85,11 @@ class StringWidget(QLineEdit, NodeWidget):
         NodeWidget.__init__(self, name, data, scheme)
         self.textEdited.connect(self.dump)
     def load(self):
+        print str(self.data.get()), str(self.text())
         self.setText(unicode(self.data.get()))
 
     def dump(self):
-        self.data.set(unicode(self.text()))
+        self.data.set(unicode(self.text()), not_notify=self.load)
 
     @classmethod
     def _get_default_data(cls, scheme, data):
