@@ -1,7 +1,9 @@
 from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QToolBar, QMainWindow, QToolButton, QMessageBox, QStackedWidget, QStatusBar
+from PyQt4.QtGui import QToolBar, QMainWindow, QToolButton, QMessageBox, QStackedWidget, QStatusBar, QAction, QFileDialog
 import os
+from excel_export_import import export_to_excel
 from models import Path, StructuredNode
+from utils import get_home_dir
 from widgets import StructuredWidget
 
 
@@ -73,6 +75,13 @@ class NodeWindow(QMainWindow):
         self.reallyQuit = False
         self.change_caption()
 
+        if "excel_scheme" in self.scheme.get_meta():
+            actionExcelExport = QAction("Export to excel", self)
+            self.toolbar.addAction(actionExcelExport)
+            actionExcelExport.triggered.connect(self.excel_export)
+            actionExcelMerge = QAction("Merge from excel", self)
+            self.toolbar.addAction(actionExcelMerge)
+
     def change_caption(self):
         changed = ""
         if self.data.changed:
@@ -130,3 +139,10 @@ class NodeWindow(QMainWindow):
         elif value==QMessageBox.Cancel:
             return
         self.close()
+
+    def excel_export(self):
+        excel_filename = unicode(QFileDialog.getSaveFileName(self, "Save File",
+                            "New excel file.xls", "Excel files (*.xls)"))
+        if excel_filename:
+            export_to_excel(self.data, self.scheme, excel_filename)
+

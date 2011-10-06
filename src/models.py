@@ -3,14 +3,26 @@ from operator import getitem
 
 __author__ = 'darvin'
 
+META_KEY = "__META"
+
 class Path(tuple):
+    def __new__(cls, tupl=None, is_relative=False):
+        if tupl is None:
+            tupl = ()
+        result = tuple.__new__(cls, tupl)
+        result.is_relative = is_relative
+        return result
+
+    def __init__(self, tupl=None, is_relative=False):
+        self.is_relative = is_relative
+
     @classmethod
     def from_string(cls, path_str):
-        return cls([name for name in path_str.split("/") if name])
+        return cls([name for name in path_str.split("/") if name], is_relative=not path_str.startswith("/"))
 
 
     def get(self, root_node):
-        if not root_node.is_root():
+        if not root_node.is_root() and not self.is_relative:
             root_node = root_node.get_root()
         current_node = root_node
         for name in self:
@@ -58,11 +70,11 @@ class Node(object):
             return self
 
     def get_meta(self):
-        if "__Meta" in self:
-            return self["Meta"]
+        if META_KEY in self:
+            return self._value[META_KEY]
         else:
             if not self.parent:
-                return StructuredNode({}, parent=self)
+                return {}
             else:
                 return self.parent.get_meta()
 
@@ -213,7 +225,10 @@ class StructuredNode(AbstractCollectionNode):
         return self._value.keys()
 
     def iteritems(self):
-        return  self._value.iteritems()
+        return ((key, value) for key, value in self._value.iteritems() if key!=META_KEY)
+
+    def values(self):
+        return self._value.values()
 
     def __setitem__(self, key, value):
         self._check_type_item(value)
@@ -255,6 +270,9 @@ class ArrayNode(AbstractCollectionNode):
 
     def dump(self):
         return [v.dump() for v in self._value]
+
+    def values(self):
+        return iter(self._value)
 
 
     def map_subnodes(self, func):
