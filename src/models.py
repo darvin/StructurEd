@@ -78,6 +78,11 @@ class Node(object):
     def dump(self):
         return self.get()
 
+    def set_changed(self, changed, parents=False, children=False):
+        self.changed = changed
+        if parents:
+            self.parent.set_changed(changed, parents)
+
     def _notify_set(self, not_notify=None):
         if self.initialized:
             self.changed = True
@@ -171,6 +176,15 @@ class AbstractCollectionNode(TypedNode):
         if not issubclass(value.__class__, Node):
             raise NotImplementedError
 
+    def set_changed(self, changed, parents=False, children=False):
+        super(AbstractCollectionNode, self).set_changed(changed, parents)
+        if children:
+            self.map_subnodes(lambda node: node.set_changed(changed, parents, children))
+
+    def map_subnodes(self, func):
+        raise NotImplementedError
+
+
 
 @Node.register
 class StructuredNode(AbstractCollectionNode):
@@ -222,6 +236,10 @@ class StructuredNode(AbstractCollectionNode):
         del self._value[old_name]
         self._value[new_name].name = new_name
 
+    def map_subnodes(self, func):
+        for node in self._value.values():
+            func(node)
+
 
 @Node.register
 class ArrayNode(AbstractCollectionNode):
@@ -239,6 +257,9 @@ class ArrayNode(AbstractCollectionNode):
         return [v.dump() for v in self._value]
 
 
+    def map_subnodes(self, func):
+        for node in self._value:
+            func(node)
 
     def _process_subnodes(self, value):
         for v in value:

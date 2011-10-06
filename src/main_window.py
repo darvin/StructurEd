@@ -123,6 +123,9 @@ class MainWindow(QMainWindow):
         if self.save_filename:
             dump = self._data.dump()
             encode_file(dump, unicode(self.save_filename))
+
+            self._data.set_changed(False, children=True)
+            self.node_window.change_caption()
             return True
         else:
             return self.save_data_as()
