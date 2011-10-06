@@ -14,7 +14,7 @@ def layout_set_sm_and_mrg(layout):
     layout.setContentsMargins(0,0,0,0)
 
 def get_home_dir():
-    return os.getenv('USERPROFILE') or os.getenv('HOME'),
+    return os.getenv('USERPROFILE') or os.getenv('HOME')
 
 
 class StyledButton(QPushButton):
