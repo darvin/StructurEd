@@ -1,4 +1,5 @@
 from PyQt4.QtGui import QPushButton, QToolBar, QToolButton
+import os
 import random
 
 def get_or_create_dict_element(dictionary, key, default_value):
@@ -12,6 +13,8 @@ def layout_set_sm_and_mrg(layout):
     layout.setSpacing(0)
     layout.setContentsMargins(0,0,0,0)
 
+def get_home_dir():
+    return os.getenv('USERPROFILE') or os.getenv('HOME'),
 
 
 class StyledButton(QPushButton):

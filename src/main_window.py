@@ -3,7 +3,7 @@ import os
 from models import StructuredNode
 from nodewindow import NodeWindow
 from schemetree import SchemeTreeWidget, SchemeTreeEditorWidget
-from utils import merge_dictionary
+from utils import merge_dictionary, get_home_dir
 
 __author__ = 'darvin'
 import plistlib
@@ -138,7 +138,7 @@ class MainWindow(QMainWindow):
 
     def load_data(self):
         data_filename = unicode(QFileDialog.getOpenFileName(self, "Open File",
-#                            "sample_data.plist",
+                            get_home_dir(),
                             "Property Lists (*.plist)"))
         if data_filename:
             self.__load_data(data_filename)
