@@ -1,17 +1,24 @@
+import json
 from format import Format
 
-class JsonFormat(Format):
-    extensions = ["---"]
-    description = "Some Format"
 
-    @classmethod
-    def loads(cls, data_st):
-        raise NotImplementedError
+@Format.register
+class JsonFormat(Format):
+    extensions = ("json",)
+    description = "JSON"
 
     @classmethod
     def dumps(cls, data):
-        raise NotImplementedError
+        return json.dumps(data)
 
     @classmethod
-    def is_available(cls):
-        return False
+    def loads(cls, data_st):
+        return json.loads(data_st)
+
+    @classmethod
+    def initialize(cls):
+        try:
+            import json
+            return True
+        except ImportError:
+            return False

@@ -1,9 +1,9 @@
 from format import Format
 
-
+@Format.register
 class XmlFormat(Format):
-    extensions = ["---"]
-    description = "Some Format"
+    extensions = ("xml",)
+    description = "XML"
 
     @classmethod
     def loads(cls, data_st):
@@ -14,5 +14,5 @@ class XmlFormat(Format):
         raise NotImplementedError
 
     @classmethod
-    def is_available(cls):
+    def initialize(cls):
         return False

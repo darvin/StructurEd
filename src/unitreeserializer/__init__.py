@@ -1,16 +1,29 @@
-__author__ = 'darvin'
-import imp
-formats = ["json", "plist"]
+from format import Format
 available_formats = []
-print __name__
-for format_name in formats:
-#    try:
-        format = imp.find_module(__name__+".{}_format".format(format_name))
-#        format = __import__("unitreeserializer.{}_format".format(format_name))
-#    except ImportError:
-#        pass
-#    else:
-        available_formats.append(format)
+try:
+    from json_format import JsonFormat
+    available_formats.append(JsonFormat)
+except ImportError:
+    pass
+
+try:
+    from plist_format import PlistFormat
+    available_formats.append(PlistFormat)
+except ImportError:
+    pass
+
+try:
+    from xml_format import XmlFormat
+    available_formats.append(XmlFormat)
+except ImportError:
+    pass
+
+try:
+    from yaml_format import YamlFormat
+    available_formats.append(YamlFormat)
+except ImportError:
+    pass
+
 
 class FormatNotAvailableError(Exception):
     pass

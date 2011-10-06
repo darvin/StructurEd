@@ -1,17 +1,23 @@
+import yaml
 from format import Format
 
-class PlistFormat(Format):
-    extensions = ["---"]
-    description = "Some Format"
+@Format.register
+class YamlFormat(Format):
+    extensions = ("yaml",)
+    description = "YAML"
 
     @classmethod
     def loads(cls, data_st):
-        raise NotImplementedError
+        return yaml.load(data_st)
 
     @classmethod
     def dumps(cls, data):
-        raise NotImplementedError
+        return yaml.dump(data)
 
     @classmethod
-    def is_available(cls):
-        return False
+    def initialize(cls):
+        try:
+            import yaml
+            return True
+        except ImportError:
+            return False

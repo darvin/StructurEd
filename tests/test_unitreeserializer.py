@@ -1,5 +1,6 @@
-from unitreeserializer import loads, dumps, available_formats
+from unitreeserializer import loads, dumps
 import unittest
+from unitreeserializer.format import Format
 
 class TestUniTreeSerializerFunctions(unittest.TestCase):
 
@@ -8,9 +9,10 @@ class TestUniTreeSerializerFunctions(unittest.TestCase):
         
 
     def test_sanity(self):
-        print available_formats
-        for format in available_formats:
+        print Format.get_formats()
+        for format in Format.get_formats():
             st = dumps(self.some_data, format)
+            print st
             self.assertTrue(isinstance(st, (unicode, str)))
             self.assertEqual(self.some_data, loads(st, format))
 
