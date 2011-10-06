@@ -80,7 +80,7 @@ class NodeWindow(QMainWindow):
         self.setWindowTitle("{} {}".format(changed, self.get_window_caption()))
 
     def get_window_caption(self):
-        return os.path.basename(self.parent().save_filename)
+        return os.path.basename(self.parent().save_filename or "New Data")
 
 
     def openWidgetByPath(self, path):

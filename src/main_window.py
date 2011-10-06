@@ -86,7 +86,7 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("{} {}".format(changed, self.get_window_caption()))
 
     def get_window_caption(self):
-        return os.path.basename(self.scheme_filename)
+        return os.path.basename(self.scheme_filename or "New Scheme")
 
 
 
