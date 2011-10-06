@@ -2,7 +2,6 @@ import json
 from format import Format
 
 
-@Format.register
 class JsonFormat(Format):
     extensions = ("json",)
     description = "JSON"
@@ -14,11 +13,3 @@ class JsonFormat(Format):
     @classmethod
     def loads(cls, data_st):
         return json.loads(data_st)
-
-    @classmethod
-    def initialize(cls):
-        try:
-            import json
-            return True
-        except ImportError:
-            return False

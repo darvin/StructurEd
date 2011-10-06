@@ -1,6 +1,7 @@
 from PyQt4.QtGui import QPushButton, QToolBar, QToolButton
 import os
 import random
+from unitreeserializer.format import Format
 
 def get_or_create_dict_element(dictionary, key, default_value):
     if key in dictionary:
@@ -73,3 +74,19 @@ def merge_dictionary(dst, src):
 
 def random_str(st):
     return "{} {}".format(st, random.randint(1,100))
+
+
+
+def get_format_filter(multi_options=False):
+    formats = Format.get_formats()
+    if multi_options:
+        res = []
+        for f in formats:
+            res.append("{} ({})".format(f.description, " ".join(("*.{}".format(ext) for ext in f.extensions))))
+        result = ";;".join(res)
+        return result
+    else:
+        all_exts = ()
+        for f in formats:
+            all_exts += f.extensions
+        return "Any data file ({})".format(" ".join(("*.{}".format(ext) for ext in all_exts)))
