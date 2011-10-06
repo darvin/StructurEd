@@ -161,6 +161,7 @@ class MainWindow(QMainWindow):
 
     def _merge_data(self, data_dict):
         self._data = StructuredNode(merge_dictionary(self._data.dump(), data_dict))
+        self._data.changed = True
         self._open_root()
 
 
