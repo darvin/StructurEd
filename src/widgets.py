@@ -32,6 +32,7 @@ class NodeWidget(object):
     data_type = "NoSuchType"
     simple_widget = False
     description = ""
+    data_class = None
     __node_widgets_classes = {}
     def __init__(self, name, data, scheme):
 
@@ -75,6 +76,13 @@ class NodeWidget(object):
         return new_data
 
     @classmethod
+    def get_data_class(cls, scheme):
+        w_class = cls.__node_widgets_classes[scheme["Type"].get()]
+        if hasattr(w_class, "_get_data_class"):
+            return w_class._get_data_class(scheme)
+        return w_class.data_class
+
+    @classmethod
     def get_simple_widgets(cls):
         return [value for key, value in cls.__node_widgets_classes.iteritems() if value.simple_widget]
 
@@ -91,6 +99,7 @@ class NodeWidget(object):
 class StringWidget(QLineEdit, NodeWidget):
     data_type = "String"
     simple_widget = True
+    data_class = StringNode
     def __init__(self, name, data, scheme, parent=None):
         QLineEdit.__init__(self, parent)
         NodeWidget.__init__(self, name, data, scheme)
@@ -110,6 +119,7 @@ class StringWidget(QLineEdit, NodeWidget):
 @NodeWidget.register
 class SubNodeWidget(QPushButton, NodeWidget):
     data_type = "SubNode"
+    data_class = StructuredNode
     def __init__(self, name, data, scheme, parent=None):
         QPushButton.__init__(self, "open", parent)
         NodeWidget.__init__(self, name, data, scheme)
@@ -132,6 +142,7 @@ class SubNodeWidget(QPushButton, NodeWidget):
 class FilenameWidget(QWidget, NodeWidget):
     data_type = "Filename"
     simple_widget = True
+    data_class = StringNode
     def __init__(self, name, data, scheme, parent=None):
         QWidget.__init__(self, parent)
         NodeWidget.__init__(self, name, data, scheme)
@@ -211,6 +222,7 @@ class FilenameImageWidget(FilenameWidget):
 class IntegerWidget(StringWidget):
     data_type = "Integer"
     simple_widget = True
+    data_class = IntegerNode
     def __init__(self, name, data, scheme, parent=None):
         super(IntegerWidget, self).__init__(name, data, scheme, parent)
         validator = QIntValidator(self)
@@ -231,6 +243,7 @@ class IntegerWidget(StringWidget):
 class RealWidget(StringWidget):
     data_type = "Real"
     simple_widget = True
+    data_class = RealNode
     def __init__(self, name, data, scheme, parent=None):
         super(RealWidget, self).__init__(name, data, scheme, parent)
         validator = QDoubleValidator(self)
@@ -251,6 +264,7 @@ class RealWidget(StringWidget):
 class BooleanWidget(QCheckBox, NodeWidget):
     data_type = "Boolean"
     simple_widget = True
+    data_class = BooleanNode
     def __init__(self, name, data, scheme, parent=None):
         QCheckBox.__init__(self, parent)
         NodeWidget.__init__(self, name, data, scheme)
@@ -271,6 +285,7 @@ class BooleanWidget(QCheckBox, NodeWidget):
 class ArrayWidget(QWidget, NodeWidget):
     data_type = "Array"
     two_rows = True
+    data_class = ArrayNode
     def __init__(self, name, data, scheme, parent=None):
         QWidget.__init__(self, parent)
         NodeWidget.__init__(self, name, data, scheme)
@@ -325,6 +340,7 @@ class ArrayWidget(QWidget, NodeWidget):
 
 @NodeWidget.register
 class StructuredWidget(QWidget, NodeWidget):
+    data_class = StructuredNode
     def __init__(self, name, data, scheme, open_func, parent=None):
         QWidget.__init__(self, parent)
         NodeWidget.__init__(self, name, data, scheme)
@@ -374,6 +390,7 @@ class StructuredWidget(QWidget, NodeWidget):
 class StructuredDictionaryWidget(QWidget, NodeWidget):
     data_type = "StructuredDictionary"
     two_rows = True
+    data_class = StructuredNode
     def __init__(self, name, data, scheme, parent=None):
         QWidget.__init__(self, parent)
         NodeWidget.__init__(self, name, data, scheme)
@@ -472,6 +489,11 @@ class SelectWidget(QComboBox, NodeWidget):
     def dump(self):
         self.data.set(self.options[self.itemData(self.currentIndex()).toPyObject()].get())
 
+    @classmethod
+    def _get_data_class(cls, scheme):
+        #fixme not create node here
+        return Node.create_node(scheme["Options"][0].get()).__class__
+
 
     @classmethod
     def _get_default_data(cls, scheme, data):
@@ -489,7 +511,14 @@ class SelectObjectWidget(SelectWidget):
     def _get_options_from_scheme(cls, scheme, data):
         path = Path.from_string(scheme["OptionPath"].get())
         return [Node.create_node(name) for name in path.get(data).keys()]
-        
+
+    @classmethod
+    def _get_data_class(cls, scheme):
+        #fixme
+        return StringNode
+
+
+
     @classmethod
     def _get_default_data(cls, scheme, data):
         res = cls._get_options_from_scheme(scheme, data)
@@ -545,6 +574,7 @@ class WidgetSelector(QWidget):
 class DictWidget(QWidget, NodeWidget):
     data_type = "Dict"
     two_rows = True
+    data_class = StructuredNode
     def __init__(self, name, data, scheme, parent=None):
         QWidget.__init__(self, parent)
         NodeWidget.__init__(self, name, data, scheme)

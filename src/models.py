@@ -21,24 +21,44 @@ class Path(tuple):
         return cls([name for name in path_str.split("/") if name], is_relative=not path_str.startswith("/"))
 
 
-    def get(self, root_node):
-        if not root_node.is_root() and not self.is_relative:
-            root_node = root_node.get_root()
-        current_node = root_node
+    def get(self, root_node, reduce_sub_elements=False):
+        current_node = self._get_root_node(root_node)
         for name in self:
+            if reduce_sub_elements and name=="SubElements":
+                continue
             if name in current_node:
                 current_node = current_node[name]
             elif "ElementStructure" in current_node:
                 current_node = current_node["ElementStructure"]
+            else:
+                raise KeyError
         return current_node
 
+    def set(self, root_node, value):
+        current_node = self._get_root_node(root_node)
+        print unicode(self), value
+        for i, name in enumerate(self):
+            if i<(len(self)-1):
+                if name not in current_node:
+                    current_node.create_structured_child(name)
+                current_node = current_node[name]
+            else:
+                current_node[name] = value
+
     def __unicode__(self):
-        return "/".join(self)
+        if not self.is_relative:
+            return "/"+"/".join(self)
+        else:
+            return "/".join(self)
 
     def __str__(self):
         return unicode(self)
 
-
+    def _get_root_node(self, root_node):
+        if not root_node.is_root() and not self.is_relative:
+            return root_node.get_root()
+        else:
+            return root_node
 
 
 class Node(object):
@@ -139,11 +159,13 @@ class TypedNode(Node):
     types = None
 
     def _check_type(self, value):
-        if not isinstance(value, self.types):
+        try:
+            return self.types[0](value)
+        except ValueError:
             raise NotImplementedError
 
     def set(self, value, not_notify=None):
-        self._check_type(value)
+        value = self._check_type(value)
         super(TypedNode, self).set(value, not_notify)
 
 @Node.register
@@ -207,6 +229,10 @@ class StructuredNode(AbstractCollectionNode):
         for key, value in self._value.iteritems():
             result[key] = value.dump()
         return result
+
+    def create_structured_child(self, name):
+        self[name] = self.__class__({}, name, self)
+        return self[name]
 
 
 

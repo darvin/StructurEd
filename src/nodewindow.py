@@ -1,7 +1,7 @@
 from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QToolBar, QMainWindow, QToolButton, QMessageBox, QStackedWidget, QStatusBar, QAction, QFileDialog
 import os
-from excel_export_import import export_to_excel
+from excel_export_import import export_to_excel, import_from_excel
 from models import Path, StructuredNode
 from utils import get_home_dir
 from widgets import StructuredWidget
@@ -75,11 +75,12 @@ class NodeWindow(QMainWindow):
         self.reallyQuit = False
         self.change_caption()
 
-        if "excel_scheme" in self.scheme.get_meta():
+        if "ExcelScheme" in self.scheme.get_meta():
             actionExcelExport = QAction("Export to excel", self)
             self.toolbar.addAction(actionExcelExport)
             actionExcelExport.triggered.connect(self.excel_export)
             actionExcelMerge = QAction("Merge from excel", self)
+            actionExcelMerge.triggered.connect(self.excel_import)
             self.toolbar.addAction(actionExcelMerge)
 
     def change_caption(self):
@@ -101,7 +102,7 @@ class NodeWindow(QMainWindow):
             self.pathWidget.setPath(path)
         else:
             if "Type" not in path.get(self.scheme): #fimxe soon
-                self.cachedWidgets[path] = StructuredWidget(unicode(path), path.get(self.data), path.get(self.scheme), self.openWidgetByPath, self)
+                self.cachedWidgets[path] = StructuredWidget(unicode(path), path.get(self.data, reduce_sub_elements=True), path.get(self.scheme), self.openWidgetByPath, self)
                 self.stacked.addWidget(self.cachedWidgets[path])
                 self.openWidgetByPath(path)
             else:
@@ -146,3 +147,8 @@ class NodeWindow(QMainWindow):
         if excel_filename:
             export_to_excel(self.data, self.scheme, excel_filename)
 
+    def excel_import(self):
+        excel_filename = unicode(QFileDialog.getOpenFileName(self, "Open File", get_home_dir(),  "Excel files (*.xls)"))
+        if excel_filename:
+            data_to_merge = import_from_excel(self.scheme, excel_filename)
+            self.parent()._merge_data(data_to_merge)
