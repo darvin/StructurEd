@@ -13,9 +13,6 @@ class Path(tuple):
         result.is_relative = is_relative
         return result
 
-    def __init__(self, tupl=None, is_relative=False):
-        self.is_relative = is_relative
-
     @classmethod
     def from_string(cls, path_str):
         return cls([name for name in path_str.split("/") if name], is_relative=not path_str.startswith("/"))
