@@ -1,7 +1,11 @@
 from pprint import pprint
 import xlrd
-from models import Path, StructuredNode, Node
-from widgets import NodeWidget
+try: #fixme
+    from models import Path, StructuredNode, Node
+    from widgets import NodeWidget
+except ImportError:
+    from structured.models import Path, StructuredNode, Node
+    from structured.widgets import NodeWidget
 
 __author__ = 'darvin'
 import xlwt

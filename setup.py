@@ -141,7 +141,7 @@ Topic :: Utilities
 """.split("\n"),
     license="GPL",
     package_dir = {'structured': 'src'},
-    packages = ['structured'],
+    packages = ['structured', 'structured.unitreeserializer', 'structured.excel_export_import'],
     scripts=[mainscript],
      cmdclass = cmds,
     **extra_options
