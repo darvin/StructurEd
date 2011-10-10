@@ -102,8 +102,10 @@ class MainWindow(QMainWindow):
         self.settings.setValue('recent_files/data', self.save_filename)
         self.settings.setValue('recent_files/scheme', self.scheme_filename)
 
-    def _open_root(self):
+    def _open_root(self, force_quit=False):
         if self.node_window:
+            if force_quit:
+                self.node_window.reallyQuit = True
             self.node_window.close()
         self.node_window = NodeWindow(self._data, self._scheme, parent=self)
         self.node_window.show()
@@ -159,7 +161,7 @@ class MainWindow(QMainWindow):
     def _merge_data(self, data_dict):
         self._data = StructuredNode(merge_dictionary(self._data.dump(), data_dict))
         self._data.changed = True
-        self._open_root()
+        self._open_root(force_quit=True)
 
 
 
