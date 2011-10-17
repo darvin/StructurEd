@@ -107,19 +107,23 @@ class NodeWindow(QMainWindow):
         self.tree_widget.pathChange(path)
 
     def _open_widget_by_path(self, path):
-        if path in self.cachedWidgets:
-#            if self.currentStructuredWidget:
-#                self.currentStructuredWidget.hide()
-            self.currentStructuredWidget = self.cachedWidgets[path]
-            self.stacked.setCurrentWidget(self.currentStructuredWidget)
-            self.pathWidget.setPath(path)
-        else:
-            if "Type" not in path.get(self.scheme): #fimxe soon
-                self.cachedWidgets[path] = StructuredWidget(unicode(path), path.get(self.data, reduce_sub_elements=True), path.get(self.scheme), self.openWidgetByPath, self)
-                self.stacked.addWidget(self.cachedWidgets[path])
-                self._open_widget_by_path(path)
+        #fixme
+        try:
+            if path in self.cachedWidgets:
+    #            if self.currentStructuredWidget:
+    #                self.currentStructuredWidget.hide()
+                self.currentStructuredWidget = self.cachedWidgets[path]
+                self.stacked.setCurrentWidget(self.currentStructuredWidget)
+                self.pathWidget.setPath(path)
             else:
-                pass
+                if "Type" not in path.get(self.scheme): #fimxe soon
+                    self.cachedWidgets[path] = StructuredWidget(unicode(path), path.get(self.data, reduce_sub_elements=True), path.get(self.scheme), self.openWidgetByPath, self)
+                    self.stacked.addWidget(self.cachedWidgets[path])
+                    self._open_widget_by_path(path)
+                else:
+                    pass
+        except KeyError:
+            pass
 
     def closeEvent(self, event):
         if self.reallyQuit or not self.data.changed:

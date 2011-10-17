@@ -120,9 +120,10 @@ class Node(object):
                 self.parent._notify_set(not_notify)
         elif self.can_be_initalized:
             self.initialized=True
-        for func in self.__notify_at_set:
-            if func!=not_notify:
-                func()
+        if not_notify!=True:
+            for func in self.__notify_at_set:
+                if func!=not_notify:
+                    func()
 
     def set(self, value, not_notify=None):
         self._value = value
