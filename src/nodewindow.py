@@ -1,8 +1,10 @@
 from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QToolBar, QMainWindow, QToolButton, QMessageBox, QStackedWidget, QStatusBar, QAction, QFileDialog
+from PyQt4.QtGui import QToolBar, QMainWindow, QToolButton, QMessageBox, QStackedWidget, \
+    QStatusBar, QAction, QFileDialog, QDockWidget
 import os
 from excel_export_import import export_to_excel, import_from_excel
 from models import Path, StructuredNode
+from schemetree import DataTreeWidget
 from utils import get_home_dir
 from widgets import StructuredWidget
 
@@ -66,7 +68,6 @@ class NodeWindow(QMainWindow):
 
         self.data, self.scheme = data, scheme
         self.data.add_set_notify(self.change_caption)
-        self.openWidgetByPath(Path())
         self.toolbar = QToolBar()
         self.toolbar.addActions((self.parent().actionSave,self.parent().actionSaveAs, ))
         self.addToolBar(self.toolbar)
@@ -83,6 +84,15 @@ class NodeWindow(QMainWindow):
             actionExcelMerge.triggered.connect(self.excel_import)
             self.toolbar.addAction(actionExcelMerge)
 
+        self.tree_widget = DataTreeWidget(self.data, self)
+        dock = QDockWidget(self)
+        dock.setWidget(self.tree_widget)
+        self.addDockWidget(Qt.LeftDockWidgetArea, dock)
+        self.tree_widget.pathChanged.connect(self._open_widget_by_path)
+
+        self.openWidgetByPath(Path())
+
+
     def change_caption(self):
         changed = ""
         if self.data.changed:
@@ -92,8 +102,11 @@ class NodeWindow(QMainWindow):
     def get_window_caption(self):
         return os.path.basename(self.parent().save_filename or "New Data")
 
-
     def openWidgetByPath(self, path):
+        self._open_widget_by_path(path)
+        self.tree_widget.pathChange(path)
+
+    def _open_widget_by_path(self, path):
         if path in self.cachedWidgets:
 #            if self.currentStructuredWidget:
 #                self.currentStructuredWidget.hide()
@@ -104,7 +117,7 @@ class NodeWindow(QMainWindow):
             if "Type" not in path.get(self.scheme): #fimxe soon
                 self.cachedWidgets[path] = StructuredWidget(unicode(path), path.get(self.data, reduce_sub_elements=True), path.get(self.scheme), self.openWidgetByPath, self)
                 self.stacked.addWidget(self.cachedWidgets[path])
-                self.openWidgetByPath(path)
+                self._open_widget_by_path(path)
             else:
                 pass
 

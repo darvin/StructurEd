@@ -1,4 +1,4 @@
-from PyQt4.QtGui import QPushButton, QToolBar, QToolButton
+from PyQt4.QtGui import QPushButton, QToolBar, QToolButton, QTreeWidgetItemIterator
 import os
 import random
 from unitreeserializer.format import Format
@@ -90,3 +90,19 @@ def get_format_filter(multi_options=False):
         for f in formats:
             all_exts += f.extensions
         return "Any data file ({})".format(" ".join(("*.{}".format(ext) for ext in all_exts)))
+
+
+class TreeWidgetIter(QTreeWidgetItemIterator):
+    def __init__(self, *args):
+        QTreeWidgetItemIterator.__init__(self, *args)
+
+    def __iter__(self):
+        return self
+
+    def next(self):
+        self.__iadd__(1)
+        value = self.value()
+        if value:
+            return self.value()
+        else:
+            raise StopIteration

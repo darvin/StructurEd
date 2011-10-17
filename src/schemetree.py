@@ -1,7 +1,7 @@
-from PyQt4.QtCore import QSize
+from PyQt4.QtCore import QSize, pyqtSignal, pyqtSlot
 from PyQt4.QtGui import QTreeWidgetItem, QVBoxLayout, QHBoxLayout, QTreeWidget, QIcon, QSizePolicy, QWidget
-from models import StructuredNode
-from utils import PlusMinusWidget
+from models import StructuredNode, Path
+from utils import PlusMinusWidget, TreeWidgetIter
 
 __author__ = 'darvin'
 
@@ -36,15 +36,15 @@ class SchemeTreeEditorWidget(QWidget):
         self._scheme_tree.delete_current()
 
 
-class SchemeTreeWidget(QTreeWidget):
+class AbstractTreeWidget(QTreeWidget):
     __icons_cache = {}
+    expanded_at_start = True
     def __init__(self, scheme, parent=None):
-        super(SchemeTreeWidget, self).__init__(parent)
+        super(AbstractTreeWidget, self).__init__(parent)
         self.load_new_scheme(scheme)
-        self.setColumnCount(3)
-#        self.header().hide()
-        self.setHeaderLabels(("Name", "Type", "Description"))
+
         self.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
+        self.itemSelectionChanged.connect(self._item_selection_changed)
 
 
     def sizeHint(self):
@@ -63,7 +63,7 @@ class SchemeTreeWidget(QTreeWidget):
 
         item = QTreeWidgetItem(parent, [node.name, type, desc])
         item.node = node
-        item.setExpanded(True)
+        item.setExpanded(self.expanded_at_start)
         if type not in self.__icons_cache:
             self.__icons_cache[type] = QIcon(":/icons/small/datatypes/{}.png".format(type))
         item.setIcon(0, self.__icons_cache[type])
@@ -102,4 +102,35 @@ class SchemeTreeWidget(QTreeWidget):
         if selected:
             selected[0].node.delete_from_parent()
 
+    pathChanged = pyqtSignal(Path)
 
+    def _item_selection_changed(self):
+        items = self.selectedItems()
+        if items:
+            item = items[0]
+            path = item.node.path()
+            self.pathChanged.emit(path)
+
+    @pyqtSlot(Path)
+    def pathChange(self, path):
+        iterator = TreeWidgetIter(self)
+        for item in iterator:
+            if item.node.path()==path:
+                self.setCurrentItem(item)
+
+
+
+
+class SchemeTreeWidget(AbstractTreeWidget):
+    def __init__(self, data, parent=None):
+        super(SchemeTreeWidget, self).__init__(data, parent)
+        self.setColumnCount(3)
+#        self.header().hide()
+        self.setHeaderLabels(("Name", "Type", "Description"))
+
+
+class DataTreeWidget(AbstractTreeWidget):
+    expanded_at_start = False
+    def __init__(self, data, parent=None):
+        super(DataTreeWidget, self).__init__(data, parent)
+        self.header().hide()
