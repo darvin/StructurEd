@@ -106,7 +106,7 @@ class Node(object):
 
     def dump(self):
         return self.get()
-
+ 
     def set_changed(self, changed, parents=False, children=False):
         self.changed = changed
         if parents:
