@@ -386,11 +386,10 @@ class StructuredWidget(QWidget, NodeWidget):
         return StructuredNode({})
 
 
-@NodeWidget.register
-class StructuredDictionaryWidget(QWidget, NodeWidget):
-    data_type = "StructuredDictionary"
+class AbstractStructuredWidget(QWidget, NodeWidget):
+    data_type = None
     two_rows = True
-    data_class = StructuredNode
+    data_class = None
     def __init__(self, name, data, scheme, parent=None):
         QWidget.__init__(self, parent)
         NodeWidget.__init__(self, name, data, scheme)
@@ -430,11 +429,9 @@ class StructuredDictionaryWidget(QWidget, NodeWidget):
         self._listwidget.takeItem(self._listwidget.row(self._listwidget.currentItem()))
         del self.data[item_name]
 
-    def create_item(self):
-        get_or_create_dict_element(self.data, "new item", StructuredNode({}))
-        self.__createItem("new item")
 
-    def __createItem(self, itemname):
+
+    def _createItem(self, itemname):
         item = QListWidgetItem(itemname)
 
         item.setFlags (Qt.ItemIsSelectable | Qt.ItemIsEditable | Qt.ItemIsEnabled )
@@ -455,14 +452,46 @@ class StructuredDictionaryWidget(QWidget, NodeWidget):
         pass
 
 
-    def load(self):
-        self._listwidget.clear()
-        for key in self.data.keys():
-            self.__createItem(key)
 
+@NodeWidget.register
+class StructuredNodeWidget(AbstractStructuredWidget):
+    data_type= "StructuredDictionary"
+    data_class = StructuredNode
     @classmethod
     def _get_default_data(cls, scheme, data):
         return StructuredNode({})
+
+
+    def load(self):
+        self._listwidget.clear()
+        for key in self.data.keys():
+            self._createItem(key)
+
+    def create_item(self):
+        get_or_create_dict_element(self.data, "new item", StructuredNode({}))
+        self._createItem("new item")
+
+
+
+@NodeWidget.register
+class StructuredArrayWidget(AbstractStructuredWidget):
+    data_type= "StructuredArray"
+    data_class = ArrayNode
+    ITEM_TITLE = "Item {}"
+    @classmethod
+    def _get_default_data(cls, scheme, data):
+        return ArrayNode([])
+
+
+    def load(self):
+        self._listwidget.clear()
+        for i, item in enumerate(self.data):
+            self._createItem(self.ITEM_TITLE.format(i))
+
+    def create_item(self):
+        self.data.append(StructuredNode({}))
+        self._createItem(self.ITEM_TITLE.format(len(self.data)))
+
 
 
 @NodeWidget.register

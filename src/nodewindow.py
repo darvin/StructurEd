@@ -69,7 +69,7 @@ class NodeWindow(QMainWindow):
         self.data, self.scheme = data, scheme
         self.data.add_set_notify(self.change_caption)
         self.toolbar = QToolBar()
-        self.toolbar.addActions((self.parent().actionSave,self.parent().actionSaveAs, ))
+        self.toolbar.addActions((self.parent().actionSave,self.parent().actionSaveAs,))
         self.addToolBar(self.toolbar)
         self.setUnifiedTitleAndToolBarOnMac(True)
         self.messageBoxChanged = None
@@ -107,8 +107,8 @@ class NodeWindow(QMainWindow):
         self.tree_widget.pathChange(path)
 
     def _open_widget_by_path(self, path):
-        #fixme
-        try:
+#        #fixme
+#        try:
             if path in self.cachedWidgets:
     #            if self.currentStructuredWidget:
     #                self.currentStructuredWidget.hide()
@@ -121,9 +121,10 @@ class NodeWindow(QMainWindow):
                     self.stacked.addWidget(self.cachedWidgets[path])
                     self._open_widget_by_path(path)
                 else:
+                    print ""
                     pass
-        except KeyError:
-            pass
+#        except KeyError:
+#            pass
 
     def closeEvent(self, event):
         if self.reallyQuit or not self.data.changed:

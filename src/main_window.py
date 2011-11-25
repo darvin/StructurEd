@@ -45,6 +45,11 @@ class MainWindow(QMainWindow):
             menuFile.addActions((actionOpen, ))
             self.toolbar.addActions((actionOpen, ))
 
+            actionNew = QAction(QIcon(":/icons/document-new.png"), "New", self)
+            actionNew.triggered.connect(self.new_data)
+            menuFile.addActions((actionNew, ))
+            self.toolbar.addActions((actionNew, ))
+
 
         self.actionSave = actionSave = QAction(QIcon(":/icons/document-save.png"),"Save", self)
         actionSave.triggered.connect(self.save_data)
@@ -145,6 +150,11 @@ class MainWindow(QMainWindow):
         data_filename = unicode(QFileDialog.getOpenFileName(self, "Open File", get_home_dir(), get_format_filter()))
         if data_filename:
             self.__load_data(data_filename)
+
+    def new_data(self):
+        self._data = StructuredNode({})
+        self.filename = None
+        self._open_root()
 
 
     def load_scheme(self):

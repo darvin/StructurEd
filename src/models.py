@@ -95,6 +95,7 @@ class Node(object):
             else:
                 return self.parent.get_meta()
 
+
     def __unicode__(self):
         return unicode(self._value)
 
@@ -106,6 +107,9 @@ class Node(object):
 
     def dump(self):
         return self.get()
+
+    def __repr__(self):
+        return repr(self._value)
  
     def set_changed(self, changed, parents=False, children=False):
         self.changed = changed
@@ -188,6 +192,11 @@ class BooleanNode(TypedNode):
 class AbstractCollectionNode(TypedNode):
     types = None
     _default_value = None
+
+    def __len__(self):
+        return len(self._value)
+
+    
     def __init__(self, value, name=None, parent=None):
         super(AbstractCollectionNode, self).__init__(deepcopy(self._default_value), name, parent)
         self._process_subnodes(value)
@@ -224,7 +233,7 @@ class StructuredNode(AbstractCollectionNode):
     _default_value = {}
     def dump(self):
         result = {}
-        for key, value in self._value.iteritems():
+        for key, value in self.__real_value().iteritems():
             result[key] = value.dump()
         return result
 
@@ -244,40 +253,55 @@ class StructuredNode(AbstractCollectionNode):
 
 
 
+    def __getitem__(self, item):
+        if item in self._value:
+            return self._value[item]
+        return self.__real_value()[item]
+
+    def __iter__(self):
+        return iter(self.__real_value())
 
     def keys(self):
-        return self._value.keys()
+        return self.__real_value().keys()
 
     def iteritems(self):
-        return ((key, value) for key, value in self._value.iteritems() if key!=META_KEY)
+        return ((key, value) for key, value in self.__real_value().iteritems() if key!=META_KEY)
 
     def values(self):
-        return self._value.values()
+        return self.__real_value().values()
 
     def __setitem__(self, key, value):
         self._check_type_item(value)
         value.name = key
         value.parent = self
         if key not in self._value:
-            self._value[key] = value
+            self.__real_value()[key] = value
             self._notify_set()
         else:
             raise NotImplementedError
 
     def __delitem__(self, key):
-        del self._value[key]
+        del self.__real_value()[key]
         self._notify_set()
 
     def rename_item(self, old_name, new_name):
         if new_name in self._value:
             raise NotImplementedError
-        self._value[new_name] = self._value[old_name]
-        del self._value[old_name]
-        self._value[new_name].name = new_name
+        self.__real_value()[new_name] = self.__real_value()[old_name]
+        del self.__real_value()[old_name]
+        self.__real_value()[new_name].name = new_name
 
     def map_subnodes(self, func):
-        for node in self._value.values():
+        for node in self.__real_value().values():
             func(node)
+
+    def __real_value(self):
+        if META_KEY in self._value:
+            if "CopyOf" in self._value[META_KEY]:
+                copypath = Path.from_string(self._value[META_KEY]["CopyOf"].get())
+                return copypath.get(self.get_root())._value
+        return self._value
+
 
 
 @Node.register
@@ -291,6 +315,9 @@ class ArrayNode(AbstractCollectionNode):
     def __getitem__(self, item):
         return getitem(self._value, item)
 
+
+    def append(self, item):
+        self._value.append(item)
 
     def dump(self):
         return [v.dump() for v in self._value]

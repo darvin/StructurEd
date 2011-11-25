@@ -1,7 +1,7 @@
-try:
-    from main_window import MainWindow
-except ImportError:
-    from structured.main_window import MainWindow
+#try:
+from main_window import MainWindow
+#except ImportError:
+#    from structured.main_window import MainWindow
 
 from PyQt4.QtGui import *
 import os, sys
